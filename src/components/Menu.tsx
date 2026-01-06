@@ -91,55 +91,81 @@ const Menu = () => {
                 </div>
 
                 {/* Menu Content */}
-                <div className="grid lg:grid-cols-2 gap-12 items-start">
-                    {/* Image */}
-                    <div className="hidden lg:block sticky top-32">
-                        <div className="aspect-square rounded-lg overflow-hidden shadow-elevated">
-                            <img
-                                src={
-                                    // 1. Check if the active category object has a DB image
-                                    categories.find(c => c.slug === activeCategory)?.image_url ||
-                                    // 2. Fallback to hardcoded map
-                                    categoryImages[activeCategory as keyof typeof categoryImages] ||
-                                    // 3. Fallback to default
-                                    dishRolls
-                                }
-                                alt={`${activeCategory} at Kin Dee Thai restaurant`}
-                                className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
-                            />
-                        </div>
-                    </div>
+                {(() => {
+                    const items = menuData[activeCategory] || [];
+                    const SPLIT_THRESHOLD = 5; // Only split if more than this many items
+                    const IMAGE_HEIGHT_EQUIVALENT = 4; // Image height ≈ 4 menu items
+                    const shouldSplit = items.length > SPLIT_THRESHOLD;
 
-                    {/* Menu Items */}
-                    <div className="space-y-6">
-                        {menuData[activeCategory]?.length === 0 ? (
-                            <p className="text-muted-foreground text-center py-10">No items available in this category yet.</p>
-                        ) : (
-                            menuData[activeCategory]?.map((item, index) => (
-                                <div
-                                    key={item.id}
-                                    className="group p-6 bg-card rounded-lg border border-border hover:border-primary/30 hover:shadow-soft transition-all duration-500"
-                                >
-                                    <div className="flex justify-between items-start gap-4">
-                                        <div className="flex-1">
-                                            <h3 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">
-                                                {item.name}
-                                                {item.is_spicy && <span className="ml-2 text-sm">🌶️</span>}
-                                                {!item.is_available && <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Sold Out</span>}
-                                            </h3>
-                                            <p className="font-body text-muted-foreground mt-1">
-                                                {item.description}
-                                            </p>
-                                        </div>
-                                        <p className="font-display text-xl text-primary font-medium">
-                                            {item.price}
-                                        </p>
-                                    </div>
+                    // For visual balance: (image + leftItems) ≈ rightItems
+                    // rightItems = (totalItems + imageHeight) / 2
+                    const rightCount = shouldSplit ? Math.floor((items.length + IMAGE_HEIGHT_EQUIVALENT) / 2) : items.length;
+                    const leftCount = items.length - rightCount;
+
+                    const rightColumnItems = items.slice(0, rightCount);
+                    const leftColumnItems = shouldSplit ? items.slice(rightCount) : [];
+
+                    const renderMenuItem = (item: any) => (
+                        <div
+                            key={item.id}
+                            className="group p-6 bg-card rounded-lg border border-border hover:border-primary/30 hover:shadow-soft transition-all duration-500"
+                        >
+                            <div className="flex justify-between items-start gap-4">
+                                <div className="flex-1">
+                                    <h3 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">
+                                        {item.name}
+                                        {item.is_spicy && <span className="ml-2 text-sm">🌶️</span>}
+                                        {!item.is_available && <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Sold Out</span>}
+                                    </h3>
+                                    <p className="font-body text-muted-foreground mt-1">
+                                        {item.description}
+                                    </p>
                                 </div>
-                            ))
-                        )}
-                    </div>
-                </div>
+                                <p className="font-display text-xl text-primary font-medium">
+                                    {item.price}
+                                </p>
+                            </div>
+                        </div>
+                    );
+
+                    return (
+                        <div className="grid lg:grid-cols-2 gap-12 items-start">
+                            {/* Left Column: Image + Overflow Items (desktop only) */}
+                            <div className="hidden lg:block space-y-6">
+                                <div className="aspect-square rounded-lg overflow-hidden shadow-elevated">
+                                    <img
+                                        src={
+                                            categories.find(c => c.slug === activeCategory)?.image_url ||
+                                            categoryImages[activeCategory as keyof typeof categoryImages] ||
+                                            dishRolls
+                                        }
+                                        alt={`${activeCategory} at Kin Dee Thai restaurant`}
+                                        className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
+                                    />
+                                </div>
+                                {/* Overflow items under the image */}
+                                {leftColumnItems.map(renderMenuItem)}
+                            </div>
+
+                            {/* Right Column: Primary Items */}
+                            <div className="space-y-6">
+                                {items.length === 0 ? (
+                                    <p className="text-muted-foreground text-center py-10">No items available in this category yet.</p>
+                                ) : (
+                                    <>
+                                        {/* On mobile: show all items. On desktop: show only rightColumnItems */}
+                                        <div className="lg:hidden space-y-6">
+                                            {items.map(renderMenuItem)}
+                                        </div>
+                                        <div className="hidden lg:block space-y-6">
+                                            {rightColumnItems.map(renderMenuItem)}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })()}
 
                 {/* Note */}
                 <p className="text-center text-sm text-muted-foreground mt-12">

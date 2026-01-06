@@ -26,7 +26,7 @@ const Footer = () => {
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
                     {/* Brand */}
                     <div className="lg:col-span-2">
-                        <h3 className="font-script text-4xl mb-4">Kin Dee</h3>
+                        <h3 className="font-display font-bold text-3xl mb-4 uppercase tracking-widest">Kin Dee</h3>
                         <p className="text-primary-foreground/70 max-w-md mb-6">
                             Thai & Asian Fusion cuisine in the heart of Dublin.
                             Experience the authentic flavours of Thailand reimagined

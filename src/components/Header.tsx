@@ -33,7 +33,7 @@ const Header = () => {
             <nav className="container-custom flex items-center justify-between">
                 <a
                     href="#"
-                    className={`font-script text-3xl md:text-4xl transition-colors duration-300 ${isScrolled ? "text-foreground" : "text-primary-foreground"
+                    className={`font-display font-bold text-2xl uppercase tracking-widest transition-colors duration-300 ${isScrolled ? "text-foreground" : "text-primary-foreground"
                         }`}
                 >
                     Kin Dee
@@ -92,7 +92,7 @@ const Header = () => {
                             <div className="flex justify-between items-center mb-8">
                                 <a
                                     href="#"
-                                    className="font-script text-3xl text-foreground"
+                                    className="font-display font-bold text-2xl uppercase tracking-widest text-foreground"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Kin Dee

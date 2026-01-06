@@ -63,6 +63,40 @@ const Login = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
                     </Button>
+                    {import.meta.env.DEV && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full mt-2 border-dashed border-yellow-500 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
+                            onClick={async () => {
+                                setEmail("admin@kindee.ie");
+                                setPassword("kindee123");
+                                // We need to wait for state update or pass directly. 
+                                // Direct call is better.
+                                setLoading(true);
+                                const { error } = await supabase.auth.signInWithPassword({
+                                    email: "admin@kindee.ie",
+                                    password: "kindee123",
+                                });
+                                if (error) {
+                                    toast({
+                                        title: "Dev Login Failed",
+                                        description: "Ensure 'admin@kindee.ie' with password 'kindee123' exists.",
+                                        variant: "destructive",
+                                    });
+                                } else {
+                                    toast({
+                                        title: "Dev Login Successful",
+                                        description: "Bypassing...",
+                                    });
+                                    navigate("/admin/dashboard");
+                                }
+                                setLoading(false);
+                            }}
+                        >
+                            ⚡ Dev Auto-Login
+                        </Button>
+                    )}
                 </form>
             </div>
         </div>
