@@ -54,7 +54,7 @@ const Menu = () => {
     if (loading) return null; // Or a loading spinner
 
     return (
-        <section id="menu" className="section-padding bg-background overflow-hidden">
+        <section id="menu" className="section-padding bg-background">
             <div className="container-custom">
                 {/* Header */}
                 <div
@@ -73,11 +73,28 @@ const Menu = () => {
                 </div>
 
                 {/* Category Tabs */}
-                <div className="flex flex-wrap justify-center gap-2 mb-12">
+                <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 mb-8 lg:static lg:bg-transparent lg:p-0 lg:mb-12 flex flex-wrap justify-center gap-2 transition-all">
                     {categories.map((category) => (
                         <button
                             key={category.slug}
-                            onClick={() => setActiveCategory(category.slug)}
+                            onClick={() => {
+                                setActiveCategory(category.slug);
+                                // Scroll logic for mobile
+                                const menuContainer = document.getElementById("menu-content");
+                                if (menuContainer) {
+                                    const headerOffset = 150; // Approx header + sticky tabs height
+                                    const elementPosition = menuContainer.getBoundingClientRect().top;
+                                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+                                    // Only scroll if we've scrolled PAST the start of the content
+                                    if (window.scrollY > offsetPosition) {
+                                        window.scrollTo({
+                                            top: offsetPosition,
+                                            behavior: "smooth"
+                                        });
+                                    }
+                                }
+                            }}
                             className={cn(
                                 "px-6 py-3 font-body text-sm uppercase tracking-wider rounded-full transition-all duration-300",
                                 activeCategory === category.slug
@@ -129,7 +146,7 @@ const Menu = () => {
                     );
 
                     return (
-                        <div className="grid lg:grid-cols-2 gap-12 items-start">
+                        <div id="menu-content" className="grid lg:grid-cols-2 gap-12 items-start scroll-mt-32">
                             {/* Left Column: Image + Overflow Items (desktop only) */}
                             <div className="hidden lg:block space-y-6">
                                 <div className="aspect-square rounded-lg overflow-hidden shadow-elevated">
