@@ -43,7 +43,7 @@ const Contact = () => {
                         Visit <em>Kin Dee</em>
                     </h2>
                     <p className="text-body text-muted-foreground max-w-2xl mx-auto">
-                        Located in the heart of Dublin on prestigious Leeson Street,
+                        Located in the heart of Dublin on prestigious Leeson Street Upper,
                         we're easily accessible from the city centre.
                     </p>
                 </div>
@@ -58,14 +58,14 @@ const Contact = () => {
                         )}
                     >
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2382.0892!2d-6.2568!3d53.3331!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48670e9f54f54557%3A0x7d8d891b98e6c8f6!2sLeeson%20Street%2C%20Dublin!5e0!3m2!1sen!2sie!4v1699999999999!5m2!1sen!2sie"
+                            src="https://maps.google.com/maps?q=loc:53.3304488,-6.2519312+(Kin%20Dee)&t=&z=15&ie=UTF8&iwloc=&output=embed"
                             width="100%"
                             height="100%"
                             style={{ border: 0 }}
                             allowFullScreen
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
-                            title="Kin Dee Restaurant Location - Leeson Street, Dublin"
+                            title="Kin Dee Restaurant Location - 133 Leeson Street Upper, Dublin"
                         />
                     </div>
 
@@ -84,7 +84,7 @@ const Contact = () => {
                             <div>
                                 <h3 className="font-display text-xl text-foreground mb-2">Address</h3>
                                 <p className="text-muted-foreground whitespace-pre-line">
-                                    {settings?.contact_address || "Leeson Street, Dublin 2, D02, Ireland"}
+                                    {settings?.contact_address || "133 Leeson Street Upper, Dublin 4, D04HX48"}
                                 </p>
                             </div>
                         </div>

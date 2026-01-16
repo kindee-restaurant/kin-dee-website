@@ -72,7 +72,7 @@ const About = () => {
                                         every dish tells a story.
                                     </p>
                                     <p className="mt-4">
-                                        Located on Dublin's elegant Leeson Street, our restaurant offers an intimate,
+                                        Located on Dublin's elegant Leeson Street Upper, our restaurant offers an intimate,
                                         refined atmosphere where you can savour exceptional cuisine crafted with
                                         the freshest ingredients and genuine passion.
                                     </p>

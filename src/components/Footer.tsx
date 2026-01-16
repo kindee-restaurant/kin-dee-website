@@ -95,7 +95,7 @@ const Footer = () => {
                         </ul>
                         <div className="mt-6">
                             <p className="text-sm text-primary-foreground/50 whitespace-pre-line">
-                                {settings?.contact_address || "Leeson Street, Dublin 2"}
+                                {settings?.contact_address || "133 Leeson Street Upper, Dublin 4, D04HX48"}
                             </p>
                             <a href={`tel:${settings?.contact_phone || "+35317654321"}`} className="text-sm text-primary-foreground/70 hover:text-primary-foreground">
                                 {settings?.contact_phone || "+353 1 765 4321"}

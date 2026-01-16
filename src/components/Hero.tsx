@@ -6,7 +6,7 @@ const Hero = () => {
     const [scrollY, setScrollY] = useState(0);
     const [heroData, setHeroData] = useState({
         title: "Where Thai Tradition Meets Modern Fusion",
-        subtitle: "Thai & Asian Fusion / Leeson Street, Dublin",
+        subtitle: "Thai & Asian Fusion / Leeson Street Upper, Dublin",
         image_url: heroFood,
         button_text: "Reserve Your Table"
     });
