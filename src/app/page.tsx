@@ -7,6 +7,7 @@ import Gallery from "@/components/Gallery";
 import Reservations from "@/components/Reservations";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import { MenuSchema, FAQSchema } from "@/components/seo";
 import { createClient } from "@/lib/supabase/server";
 
 // Server-side data fetching for SEO
@@ -62,6 +63,10 @@ export default async function HomePage() {
 
     return (
         <main className="min-h-screen">
+            {/* SEO Structured Data */}
+            <MenuSchema categories={data.categories} menuData={data.menuData} />
+            <FAQSchema />
+
             <Header />
             <Hero data={data.heroData} />
             <About settings={data.settings} />
@@ -74,3 +79,4 @@ export default async function HomePage() {
         </main>
     );
 }
+

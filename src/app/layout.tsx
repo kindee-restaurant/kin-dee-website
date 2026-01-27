@@ -72,14 +72,19 @@ export const metadata: Metadata = {
     },
 };
 
-// JSON-LD Structured Data for Restaurant
-const jsonLd = {
+// JSON-LD Structured Data for Restaurant with Organization
+const restaurantSchema = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
+    "@id": "https://kindee.ie/#restaurant",
     name: "Kin Dee",
-    image: "https://kindee.ie/images/restaurant.jpg",
+    image: [
+        "https://kindee.ie/images/restaurant.jpg",
+        "https://kindee.ie/images/interior-1.jpg",
+        "https://kindee.ie/images/food-hero.jpg",
+    ],
     description:
-        "Thai and Asian Fusion restaurant in Dublin offering authentic Thai classics and innovative fusion cuisine",
+        "Thai and Asian Fusion restaurant in Dublin offering authentic Thai classics and innovative fusion cuisine in an elegant setting on Leeson Street.",
     address: {
         "@type": "PostalAddress",
         streetAddress: "133 Leeson Street Upper",
@@ -94,9 +99,12 @@ const jsonLd = {
         longitude: -6.2568,
     },
     url: "https://kindee.ie",
-    telephone: "+353-1-765-4321",
-    servesCuisine: ["Thai", "Asian Fusion"],
+    telephone: "+353 1 963 6162",
+    email: "info@kindee.ie",
+    servesCuisine: ["Thai", "Asian Fusion", "Southeast Asian"],
     priceRange: "€€€",
+    paymentAccepted: ["Cash", "Credit Card", "Debit Card"],
+    currenciesAccepted: "EUR",
     openingHoursSpecification: [
         {
             "@type": "OpeningHoursSpecification",
@@ -119,7 +127,69 @@ const jsonLd = {
     ],
     acceptsReservations: true,
     menu: "https://kindee.ie/#menu",
+    hasMenu: {
+        "@type": "Menu",
+        "@id": "https://kindee.ie/#menu",
+        name: "Kin Dee Menu",
+        url: "https://kindee.ie/#menu",
+    },
+    potentialAction: {
+        "@type": "ReserveAction",
+        target: {
+            "@type": "EntryPoint",
+            urlTemplate: "https://kindee.ie/#reservations",
+            actionPlatform: [
+                "http://schema.org/DesktopWebPlatform",
+                "http://schema.org/MobileWebPlatform",
+            ],
+        },
+        result: {
+            "@type": "FoodEstablishmentReservation",
+            name: "Table Reservation",
+        },
+    },
+    areaServed: {
+        "@type": "City",
+        name: "Dublin",
+    },
 };
+
+// Organization schema for brand identity
+const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://kindee.ie/#organization",
+    name: "Kin Dee Restaurant",
+    url: "https://kindee.ie",
+    logo: "https://kindee.ie/logo.png",
+    contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+353 1 963 6162",
+        contactType: "reservations",
+        availableLanguage: ["English"],
+    },
+    sameAs: [
+        "https://www.facebook.com/kindeedublin",
+        "https://www.instagram.com/kindeedublin",
+        "https://www.tripadvisor.ie/Restaurant_Review-Kin_Dee_Dublin",
+    ],
+};
+
+// Breadcrumb for navigation structure
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+        {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://kindee.ie",
+        },
+    ],
+};
+
+const jsonLd = [restaurantSchema, organizationSchema, breadcrumbSchema];
 
 export default function RootLayout({
     children,
