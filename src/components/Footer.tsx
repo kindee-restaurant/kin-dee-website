@@ -34,7 +34,7 @@ const Footer = () => {
                         </p>
                         <div className="flex gap-4">
                             <a
-                                href={settings?.social_facebook || "https://facebook.com"}
+                                href={settings?.social_facebook || "https://www.facebook.com/share/1CCop44kYC/"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
@@ -43,7 +43,7 @@ const Footer = () => {
                                 <Facebook className="w-5 h-5" />
                             </a>
                             <a
-                                href={settings?.social_instagram || "https://instagram.com"}
+                                href={settings?.social_instagram || "https://www.instagram.com/kindeedublin"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300"
