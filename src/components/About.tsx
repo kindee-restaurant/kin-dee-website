@@ -1,22 +1,25 @@
+"use client";
+
+import Image from "next/image";
+
 import restaurantInterior from "@/assets/our-story-image.jpg";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
-const About = () => {
+interface AboutProps {
+    settings?: {
+        about_title?: string;
+        about_text?: string;
+        stats_experience?: string;
+        stats_dishes?: string;
+        stats_rating?: string;
+    } | null;
+}
+
+const About = ({ settings }: AboutProps) => {
     const { ref: sectionRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
     const { ref: imageRef, isVisible: imageVisible } = useScrollAnimation({ threshold: 0.3 });
     const { ref: statsRef, isVisible: statsVisible } = useScrollAnimation({ threshold: 0.5 });
-    const [settings, setSettings] = useState<any>(null);
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            const { data } = await supabase.from("site_settings").select("*").single();
-            if (data) setSettings(data);
-        };
-        fetchSettings();
-    }, []);
 
     return (
         <section id="about" className="section-padding bg-cream overflow-hidden">
@@ -32,11 +35,13 @@ const About = () => {
                                 : "opacity-0 -translate-x-20"
                         )}
                     >
-                        <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elevated">
-                            <img
+                        <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elevated relative">
+                            <Image
                                 src={restaurantInterior}
                                 alt="Elegant interior of Kin Dee Thai restaurant Dublin"
-                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                                fill
+                                className="object-cover hover:scale-105 transition-transform duration-700"
+                                priority
                             />
                         </div>
                         {/* Decorative element */}

@@ -1,4 +1,7 @@
+"use client";
+
 import { Moon, Sun, Laptop } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -8,12 +11,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface ThemeToggleProps {
-    theme: "light" | "dark" | "system";
-    setTheme: (theme: "light" | "dark" | "system") => void;
     iconOnly?: boolean;
 }
 
-export function ThemeToggle({ theme, setTheme, iconOnly = false }: ThemeToggleProps) {
+export function ThemeToggle({ iconOnly = false }: ThemeToggleProps) {
+    const { setTheme } = useTheme();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>

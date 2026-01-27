@@ -1,53 +1,40 @@
-import { useEffect, useState, useCallback } from "react";
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import heroFood from "@/assets/feast-for-the-eyes-4.jpg";
 import restaurantInterior from "@/assets/feast-for-the-eyes-1.webp";
 import dishCurry from "@/assets/feast-for-the-eyes-2.webp";
 import dishRolls from "@/assets/feast-for-the-eyes-3.jpg";
 import dishSoup from "@/assets/feast-for-the-eyes-5.jpg";
 import dishDessert from "@/assets/feast-for-the-eyes-6.webp";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "./ui/button";
 
-const galleryImages = [
-    { src: restaurantInterior, alt: "Elegant dining room at Kin Dee Dublin", span: "col-span-2 row-span-2" },
-    { src: dishCurry, alt: "Thai green curry dish", span: "col-span-1 row-span-1" },
-    { src: dishRolls, alt: "Fresh spring rolls appetizer", span: "col-span-1 row-span-1" },
-    { src: heroFood, alt: "Signature prawn noodles", span: "col-span-1 row-span-2" },
-    { src: dishSoup, alt: "Tom yum soup", span: "col-span-1 row-span-1" },
-    { src: dishDessert, alt: "Mango sticky rice dessert", span: "col-span-1 row-span-1" },
+type GalleryImage = { id?: string; image_url: any; alt_text?: string };
+
+const fallbackImages: GalleryImage[] = [
+    { image_url: restaurantInterior, alt_text: "Elegant dining room at Kin Dee Dublin" },
+    { image_url: dishCurry, alt_text: "Thai green curry dish" },
+    { image_url: dishRolls, alt_text: "Fresh spring rolls appetizer" },
+    { image_url: heroFood, alt_text: "Signature prawn noodles" },
+    { image_url: dishSoup, alt_text: "Tom yum soup" },
+    { image_url: dishDessert, alt_text: "Mango sticky rice dessert" },
 ];
 
-const Gallery = () => {
-    const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation({ threshold: 0.3 });
-    const { ref: gridRef, isVisible: gridVisible } = useScrollAnimation({ threshold: 0.1 });
-    const [images, setImages] = useState<any[]>([]);
+interface GalleryProps {
+    images?: GalleryImage[];
+}
+
+const Gallery = ({ images: propImages }: GalleryProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    const images = propImages && propImages.length > 0 ? propImages : fallbackImages;
 
     useEffect(() => {
-        import("@/integrations/supabase/client").then(({ supabase }) => {
-            supabase.from("gallery_images").select("*").order("created_at")
-                .then(({ data }) => {
-                    if (data && data.length > 0) setImages(data);
-                    else {
-                        // Fallback to initial mock data if no db data
-                        const fallbackImages = [
-                            { src: restaurantInterior, alt: "Elegant dining room at Kin Dee Dublin" },
-                            { src: dishCurry, alt: "Thai green curry dish" },
-                            { src: dishRolls, alt: "Fresh spring rolls appetizer" },
-                            { src: heroFood, alt: "Signature prawn noodles" },
-                            { src: dishSoup, alt: "Tom yum soup" },
-                            { src: dishDessert, alt: "Mango sticky rice dessert" },
-                        ];
-                        setImages(fallbackImages.map(img => ({
-                            image_url: img.src,
-                            alt_text: img.alt
-                        })));
-                    }
-                });
-        });
+        setMounted(true);
     }, []);
 
     const handleNext = useCallback((e?: React.MouseEvent) => {
@@ -75,9 +62,7 @@ const Gallery = () => {
         <section id="gallery" className="section-padding bg-cream overflow-hidden">
             <div className="container-custom">
                 {/* Header */}
-                <div
-                    className="text-center mb-12"
-                >
+                <div className="text-center mb-12">
                     <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">
                         Gallery
                     </p>
@@ -90,21 +75,25 @@ const Gallery = () => {
                 </div>
 
                 {/* Gallery Grid - Automatic Masonry Layout */}
-                <div ref={gridRef} className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+                <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
                     {images.map((image, index) => (
                         <div
-                            key={index}
+                            key={image.id || index}
                             onClick={() => setSelectedIndex(index)}
                             className={cn(
                                 "break-inside-avoid relative rounded-lg overflow-hidden group cursor-pointer transition-all duration-700 mb-4"
                             )}
                             style={{ transitionDelay: `${index * 100}ms` }}
                         >
-                            <img
-                                src={image.image_url}
-                                alt={image.alt_text}
-                                className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
+                            <div className="relative w-full h-auto min-h-[200px]">
+                                <Image
+                                    src={image.image_url}
+                                    alt={image.alt_text || "Gallery image"}
+                                    width={500}
+                                    height={500}
+                                    className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                            </div>
                             <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors duration-300 pointer-events-none" />
                         </div>
                     ))}
@@ -112,7 +101,7 @@ const Gallery = () => {
             </div>
 
             {/* Lightbox Portal */}
-            {selectedIndex !== null && createPortal(
+            {mounted && selectedIndex !== null && createPortal(
                 <div
                     className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300"
                     onClick={() => setSelectedIndex(null)}
@@ -146,8 +135,8 @@ const Gallery = () => {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <img
-                            src={images[selectedIndex].image_url}
-                            alt={images[selectedIndex].alt_text}
+                            src={typeof images[selectedIndex].image_url === 'string' ? images[selectedIndex].image_url : images[selectedIndex].image_url.src}
+                            alt={images[selectedIndex].alt_text || "Gallery image"}
                             className="max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
                         />
                         <p className="text-white/80 mt-4 text-center font-body tracking-wide px-8 text-sm md:text-base">

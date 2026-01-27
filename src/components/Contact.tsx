@@ -1,29 +1,24 @@
+"use client";
+
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
-const Contact = () => {
+type BusinessHour = { id: string; day_range: string; hours: string };
+
+interface ContactProps {
+    settings?: {
+        contact_address?: string;
+        contact_phone?: string;
+        contact_email?: string;
+    } | null;
+    hours?: BusinessHour[];
+}
+
+const Contact = ({ settings, hours = [] }: ContactProps) => {
     const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation({ threshold: 0.3 });
     const { ref: mapRef, isVisible: mapVisible } = useScrollAnimation({ threshold: 0.2 });
     const { ref: infoRef, isVisible: infoVisible } = useScrollAnimation({ threshold: 0.2 });
-
-    const [settings, setSettings] = useState<any>(null);
-    const [hours, setHours] = useState<any[]>([]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            // Settings
-            const { data: settingsData } = await supabase.from("site_settings").select("*").single();
-            if (settingsData) setSettings(settingsData);
-
-            // Hours
-            const { data: hoursData } = await supabase.from("business_hours").select("*").order("display_order");
-            if (hoursData) setHours(hoursData);
-        };
-        fetchData();
-    }, []);
 
     return (
         <section id="contact" className="section-padding bg-cream overflow-hidden">
@@ -120,7 +115,7 @@ const Contact = () => {
                             <div>
                                 <h3 className="font-display text-xl text-foreground mb-2">Opening Hours</h3>
                                 <div className="text-muted-foreground space-y-1">
-                                    {hours.length > 0 ? hours.map((h: any) => (
+                                    {hours.length > 0 ? hours.map((h) => (
                                         <p key={h.id}>{h.day_range}: {h.hours}</p>
                                     )) : (
                                         <>

@@ -1,13 +1,18 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 const Header = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
         };
@@ -75,7 +80,7 @@ const Header = () => {
             </nav>
 
             {/* Mobile Menu Portal */}
-            {createPortal(
+            {mounted && createPortal(
                 <>
                     {/* Mobile Menu Overlay */}
                     <div

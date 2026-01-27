@@ -1,37 +1,33 @@
+"use client";
+
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import heroFood from "@/assets/hero-image.png";
 
-const Hero = () => {
+interface HeroProps {
+    data?: {
+        title?: string;
+        subtitle?: string;
+        image_url?: string;
+        button_text?: string;
+    } | null;
+}
+
+const Hero = ({ data }: HeroProps) => {
     const [scrollY, setScrollY] = useState(0);
-    const [heroData, setHeroData] = useState({
-        title: "Where Thai Tradition Meets Modern Fusion",
-        subtitle: "Thai & Asian Fusion / Leeson Street Upper, Dublin",
-        image_url: heroFood,
-        button_text: "Reserve Your Table"
-    });
+
+    const heroData = {
+        title: data?.title || "Where Thai Tradition Meets Modern Fusion",
+        subtitle: data?.subtitle || "Thai & Asian Fusion / Leeson Street Upper, Dublin",
+        image_url: data?.image_url || heroFood,
+        button_text: data?.button_text || "Reserve Your Table",
+    };
 
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(() => {
-        // Fetch hero data
-        import("@/integrations/supabase/client").then(({ supabase }) => {
-            supabase.from("hero_section").select("*").limit(1).single()
-                .then(({ data }) => {
-                    if (data) {
-                        setHeroData(prev => ({
-                            title: data.title || prev.title,
-                            subtitle: data.subtitle || prev.subtitle,
-                            image_url: data.image_url || prev.image_url,
-                            button_text: data.button_text || prev.button_text
-                        }));
-                    }
-                });
-        });
     }, []);
 
     const parallaxOffset = scrollY * 0.4;
@@ -45,10 +41,12 @@ const Hero = () => {
                 className="absolute inset-0 z-0"
                 style={{ transform: `translateY(${parallaxOffset}px) scale(${scaleEffect})` }}
             >
-                <img
+                <Image
                     src={heroData.image_url}
                     alt="Exquisite Thai cuisine at Kin Dee Dublin"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black" />
             </div>

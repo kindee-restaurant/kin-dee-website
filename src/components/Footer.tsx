@@ -1,24 +1,19 @@
 import { Facebook, Instagram } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
-const Footer = () => {
+type BusinessHour = { id: string; day_range: string; hours: string };
+
+interface FooterProps {
+    hours?: BusinessHour[];
+    settings?: {
+        social_facebook?: string;
+        social_instagram?: string;
+        contact_address?: string;
+        contact_phone?: string;
+    } | null;
+}
+
+const Footer = ({ hours = [], settings }: FooterProps) => {
     const currentYear = new Date().getFullYear();
-    const [hours, setHours] = useState<any[]>([]);
-    const [settings, setSettings] = useState<any>(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            // Hours
-            const { data: hoursData } = await supabase.from("business_hours").select("*").order("display_order");
-            if (hoursData) setHours(hoursData);
-
-            // Settings
-            const { data: settingsData } = await supabase.from("site_settings").select("*").single();
-            if (settingsData) setSettings(settingsData);
-        };
-        fetchData();
-    }, []);
 
     return (
         <footer className="bg-foreground text-primary-foreground">
