@@ -61,6 +61,7 @@ const Footer = () => {
                             {[
                                 { href: "#about", label: "About Us" },
                                 { href: "#menu", label: "Our Menu" },
+                                { href: "#wines", label: "Wine List" },
                                 { href: "#gallery", label: "Gallery" },
                                 { href: "#reservations", label: "Book a Table" },
                                 { href: "#contact", label: "Contact" },

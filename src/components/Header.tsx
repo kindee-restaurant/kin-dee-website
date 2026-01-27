@@ -18,6 +18,7 @@ const Header = () => {
     const navLinks = [
         { href: "#about", label: "About" },
         { href: "#menu", label: "Menu" },
+        { href: "#wines", label: "Wines" },
         { href: "#gallery", label: "Gallery" },
         { href: "#reservations", label: "Reservations" },
         { href: "#contact", label: "Contact" },
