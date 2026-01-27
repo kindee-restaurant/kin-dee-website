@@ -34,13 +34,13 @@ async function getPageData() {
     ]);
 
     // Group menu items by category
-    const menuData: Record<string, typeof menuItems> = {};
+    const menuData: Record<string, NonNullable<typeof menuItems>> = {};
     categories?.forEach((cat) => {
         menuData[cat.slug] = menuItems?.filter((item) => item.category_id === cat.id) || [];
     });
 
     // Group wine items by category
-    const wineData: Record<string, typeof wineItems> = {};
+    const wineData: Record<string, NonNullable<typeof wineItems>> = {};
     wineCategories?.forEach((cat) => {
         wineData[cat.slug] = wineItems?.filter((item) => item.category_id === cat.id) || [];
     });
