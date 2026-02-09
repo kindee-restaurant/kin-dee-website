@@ -10,6 +10,7 @@ interface AboutProps {
     settings?: {
         about_title?: string;
         about_text?: string;
+        about_image?: string;
         stats_experience?: string;
         stats_dishes?: string;
         stats_rating?: string;
@@ -20,6 +21,10 @@ const About = ({ settings }: AboutProps) => {
     const { ref: sectionRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
     const { ref: imageRef, isVisible: imageVisible } = useScrollAnimation({ threshold: 0.3 });
     const { ref: statsRef, isVisible: statsVisible } = useScrollAnimation({ threshold: 0.5 });
+
+    console.log("About Component Settings:", settings);
+    const aboutImage = settings?.about_image && settings.about_image.length > 0 ? settings.about_image : restaurantInterior;
+    console.log("Using About Image:", aboutImage);
 
     return (
         <section id="about" className="section-padding bg-cream overflow-hidden">
@@ -37,7 +42,7 @@ const About = ({ settings }: AboutProps) => {
                     >
                         <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-elevated relative">
                             <Image
-                                src={restaurantInterior}
+                                src={aboutImage}
                                 alt="Elegant interior of Kin Dee Thai restaurant Dublin"
                                 fill
                                 className="object-cover hover:scale-105 transition-transform duration-700"

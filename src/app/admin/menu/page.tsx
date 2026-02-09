@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import {
     Dialog,
@@ -22,13 +21,15 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash } from "lucide-react";
+import { Plus, Pencil, Trash, Settings, Image } from "lucide-react";
+import { revalidateHome } from "@/app/actions";
 
 interface Category {
     id: string;
     slug: string;
     label: string;
     display_order: number;
+    image_url?: string;
 }
 
 interface MenuItem {
@@ -48,6 +49,7 @@ export default function MenuManagementPage() {
     const [loading, setLoading] = useState(true);
     const { toast } = useToast();
 
+    // Menu Item State
     const [isAddItemOpen, setIsAddItemOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
     const [newItem, setNewItem] = useState({
@@ -58,6 +60,11 @@ export default function MenuManagementPage() {
         is_spicy: false,
         is_available: true,
     });
+
+    // Category Management State
+    const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+    const [uploadingCategory, setUploadingCategory] = useState(false);
 
     const fetchData = async () => {
         const [catsRes, itemsRes] = await Promise.all([
@@ -74,6 +81,8 @@ export default function MenuManagementPage() {
         fetchData();
     }, []);
 
+    // --- Menu Item Handlers ---
+
     const handleAddItem = async (e: React.FormEvent) => {
         e.preventDefault();
         const { error } = await supabase.from("menu_items").insert([{
@@ -84,6 +93,7 @@ export default function MenuManagementPage() {
         if (error) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
         } else {
+            await revalidateHome();
             toast({ title: "Success", description: "Menu item added" });
             setIsAddItemOpen(false);
             setNewItem({ category_id: "", name: "", description: "", price: "", is_spicy: false, is_available: true });
@@ -103,6 +113,7 @@ export default function MenuManagementPage() {
         if (error) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
         } else {
+            await revalidateHome();
             toast({ title: "Success", description: "Menu item updated" });
             setEditingItem(null);
             fetchData();
@@ -117,9 +128,61 @@ export default function MenuManagementPage() {
         if (error) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
         } else {
+            await revalidateHome();
             setMenuItems(prev => prev.filter(m => m.id !== id));
             toast({ title: "Deleted", description: "Menu item removed" });
         }
+    };
+
+    // --- Category Handlers ---
+
+    const handleUpdateCategory = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingCategory) return;
+
+        const { error } = await supabase
+            .from("categories")
+            .update({
+                label: editingCategory.label,
+                image_url: editingCategory.image_url,
+            })
+            .eq("id", editingCategory.id);
+
+        if (error) {
+            toast({ title: "Error", description: error.message, variant: "destructive" });
+        } else {
+            await revalidateHome();
+            toast({ title: "Success", description: "Category updated" });
+            setEditingCategory(null);
+            fetchData();
+        }
+    };
+
+    const handleCategoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!editingCategory || !e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `category-${editingCategory.slug}-${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        setUploadingCategory(true);
+        const { error: uploadError } = await supabase.storage
+            .from('images')
+            .upload(filePath, file);
+
+        if (uploadError) {
+            toast({ title: "Upload Failed", description: uploadError.message, variant: "destructive" });
+            setUploadingCategory(false);
+            return;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('images')
+            .getPublicUrl(filePath);
+
+        setEditingCategory({ ...editingCategory, image_url: publicUrl });
+        setUploadingCategory(false);
     };
 
     if (loading) {
@@ -130,72 +193,112 @@ export default function MenuManagementPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-display">Menu Management</h1>
-                <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
-                    <DialogTrigger asChild>
-                        <Button>
-                            <Plus className="w-4 h-4 mr-2" /> Add Item
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Add Menu Item</DialogTitle>
-                        </DialogHeader>
-                        <form onSubmit={handleAddItem} className="space-y-4">
-                            <div>
-                                <Label>Category</Label>
-                                <select
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                    value={newItem.category_id}
-                                    onChange={e => setNewItem({ ...newItem, category_id: e.target.value })}
-                                    required
-                                >
-                                    <option value="">Select category</option>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.label}</option>
-                                    ))}
-                                </select>
+                <div className="flex gap-2">
+                    <Dialog open={isCategoryDialogOpen} onOpenChange={setIsCategoryDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="outline">
+                                <Settings className="w-4 h-4 mr-2" /> Manage Categories
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>Manage Categories</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                                {categories.map(cat => (
+                                    <div key={cat.id} className="border p-4 rounded-lg flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <div className="w-16 h-16 bg-muted rounded overflow-hidden flex-shrink-0">
+                                                {cat.image_url ? (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={cat.image_url} alt={cat.label} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                                        <Image className="w-6 h-6" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-medium">{cat.label}</h3>
+                                                <p className="text-xs text-muted-foreground">/{cat.slug}</p>
+                                            </div>
+                                        </div>
+                                        <Button size="sm" variant="ghost" onClick={() => setEditingCategory(cat)}>
+                                            <Pencil className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                ))}
                             </div>
-                            <div>
-                                <Label>Name</Label>
-                                <Input
-                                    value={newItem.name}
-                                    onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <Label>Description</Label>
-                                <Textarea
-                                    value={newItem.description}
-                                    onChange={e => setNewItem({ ...newItem, description: e.target.value })}
-                                />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
+                        </DialogContent>
+                    </Dialog>
+
+                    <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
+                        <DialogTrigger asChild>
+                            <Button>
+                                <Plus className="w-4 h-4 mr-2" /> Add Item
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Add Menu Item</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleAddItem} className="space-y-4">
                                 <div>
-                                    <Label>Price</Label>
+                                    <Label>Category</Label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={newItem.category_id}
+                                        onChange={e => setNewItem({ ...newItem, category_id: e.target.value })}
+                                        required
+                                    >
+                                        <option value="">Select category</option>
+                                        {categories.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <Label>Name</Label>
                                     <Input
-                                        value={newItem.price}
-                                        onChange={e => setNewItem({ ...newItem, price: e.target.value })}
-                                        placeholder="€12.50"
+                                        value={newItem.name}
+                                        onChange={e => setNewItem({ ...newItem, name: e.target.value })}
                                         required
                                     />
                                 </div>
-                                <div className="flex items-center gap-4 pt-6">
-                                    <div className="flex items-center gap-2">
-                                        <Switch
-                                            checked={newItem.is_spicy}
-                                            onCheckedChange={val => setNewItem({ ...newItem, is_spicy: val })}
+                                <div>
+                                    <Label>Description</Label>
+                                    <Textarea
+                                        value={newItem.description}
+                                        onChange={e => setNewItem({ ...newItem, description: e.target.value })}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label>Price</Label>
+                                        <Input
+                                            value={newItem.price}
+                                            onChange={e => setNewItem({ ...newItem, price: e.target.value })}
+                                            placeholder="€12.50"
+                                            required
                                         />
-                                        <Label>Spicy</Label>
+                                    </div>
+                                    <div className="flex items-center gap-4 pt-6">
+                                        <div className="flex items-center gap-2">
+                                            <Switch
+                                                checked={newItem.is_spicy}
+                                                onCheckedChange={val => setNewItem({ ...newItem, is_spicy: val })}
+                                            />
+                                            <Label>Spicy</Label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <Button type="submit" className="w-full">Add Item</Button>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+                                <Button type="submit" className="w-full">Add Item</Button>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
 
-                {/* Edit Dialog */}
+                {/* Edit Item Dialog */}
                 <Dialog open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)}>
                     <DialogContent>
                         <DialogHeader>
@@ -245,6 +348,58 @@ export default function MenuManagementPage() {
                                     </div>
                                 </div>
                                 <Button type="submit" className="w-full">Update Item</Button>
+                            </form>
+                        )}
+                    </DialogContent>
+                </Dialog>
+
+                {/* Edit Category Dialog (Nested) */}
+                <Dialog open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Edit Category</DialogTitle>
+                        </DialogHeader>
+                        {editingCategory && (
+                            <form onSubmit={handleUpdateCategory} className="space-y-4">
+                                <div>
+                                    <Label>Label</Label>
+                                    <Input
+                                        value={editingCategory.label}
+                                        onChange={e => setEditingCategory({ ...editingCategory, label: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Category Image</Label>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-24 h-24 bg-muted rounded overflow-hidden border">
+                                            {editingCategory.image_url ? (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img
+                                                    src={editingCategory.image_url}
+                                                    alt="Preview"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No Image</div>
+                                            )}
+                                        </div>
+                                        <Label htmlFor="cat-upload" className="cursor-pointer">
+                                            <div className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted transition-colors">
+                                                {uploadingCategory ? "Uploading..." : "Change Image"}
+                                            </div>
+                                            <Input
+                                                id="cat-upload"
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={handleCategoryImageUpload}
+                                                disabled={uploadingCategory}
+                                            />
+                                        </Label>
+                                    </div>
+                                </div>
+                                <Button type="submit" className="w-full">Save Changes</Button>
                             </form>
                         )}
                     </DialogContent>

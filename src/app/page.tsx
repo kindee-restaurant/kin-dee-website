@@ -60,6 +60,7 @@ async function getPageData() {
 
 export default async function HomePage() {
     const data = await getPageData();
+    console.log("Server Page Data - Settings:", data.settings);
 
     return (
         <main className="min-h-screen">

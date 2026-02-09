@@ -12,6 +12,8 @@ import {
     LogOut,
     Home,
     Menu,
+    Wine,
+    Sparkles,
 } from "lucide-react";
 import {
     SidebarInset,
@@ -33,7 +35,9 @@ import Link from "next/link";
 
 const menuItems = [
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
+    { title: "Hero", icon: Sparkles, href: "/admin/hero" },
     { title: "Menu", icon: UtensilsCrossed, href: "/admin/menu" },
+    { title: "Wine List", icon: Wine, href: "/admin/wine" },
     { title: "Gallery", icon: ImageIcon, href: "/admin/gallery" },
     { title: "Settings", icon: Settings, href: "/admin/settings" },
 ];
@@ -48,6 +52,12 @@ export default function AdminLayout({
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Bypass auth check on login page
+        if (pathname === "/admin/login") {
+            setLoading(false);
+            return;
+        }
+
         const checkAuth = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
@@ -80,6 +90,10 @@ export default function AdminLayout({
                 <div className="animate-pulse text-muted-foreground">Loading...</div>
             </div>
         );
+    }
+
+    if (pathname === "/admin/login") {
+        return <>{children}</>;
     }
 
     return (
