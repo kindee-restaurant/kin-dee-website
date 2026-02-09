@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { ChevronDown } from "lucide-react";
 import dishCurry from "@/assets/menu-thai-classics.jpg";
 import dishRolls from "@/assets/menu-starters.jpg";
 import dishSoup from "@/assets/menu-thai-asian-fusion.webp";
@@ -11,6 +12,7 @@ import dishDessert from "@/assets/menu-deserts.webp";
 
 type MenuCategory = { id: string; slug: string; label: string; image_url?: string };
 type MenuItem = { id: string; name: string; description?: string; price: string; is_spicy?: boolean; is_available?: boolean };
+type Allergen = { id: string; number: string; name: string; display_order: number };
 
 const categoryImages: Record<string, any> = {
     starters: dishRolls,
@@ -22,10 +24,13 @@ const categoryImages: Record<string, any> = {
 interface MenuProps {
     categories: MenuCategory[];
     menuData: Record<string, MenuItem[]>;
+    allergens: Allergen[];
+    allergenMap: Record<string, string[]>; // menu_item_id -> allergen number labels
 }
 
-const Menu = ({ categories, menuData }: MenuProps) => {
+const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
     const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || "starters");
+    const [allergensOpen, setAllergensOpen] = useState(false);
     const { ref: menuRef, isVisible: menuVisible } = useScrollAnimation({ threshold: 0.1 });
 
     if (categories.length === 0) return null;
@@ -39,28 +44,34 @@ const Menu = ({ categories, menuData }: MenuProps) => {
     const rightColumnItems = items.slice(0, rightCount);
     const leftColumnItems = shouldSplit ? items.slice(rightCount) : [];
 
-    const renderMenuItem = (item: MenuItem) => (
-        <div
-            key={item.id}
-            className="group p-6 bg-card rounded-lg border border-border hover:border-primary/30 hover:shadow-soft transition-all duration-500"
-        >
-            <div className="flex justify-between items-start gap-4">
-                <div className="flex-1">
-                    <h3 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">
-                        {item.name}
-                        {item.is_spicy && <span className="ml-2 text-sm">🌶️</span>}
-                        {!item.is_available && <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Sold Out</span>}
-                    </h3>
-                    <p className="font-body text-muted-foreground mt-1">
-                        {item.description}
+    const renderMenuItem = (item: MenuItem) => {
+        const itemAllergens = allergenMap[item.id] || [];
+        return (
+            <div
+                key={item.id}
+                className="group p-6 bg-card rounded-lg border border-border hover:border-primary/30 hover:shadow-soft transition-all duration-500"
+            >
+                <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                        <h3 className="font-display text-xl text-foreground group-hover:text-primary transition-colors">
+                            {item.name}
+                            {item.is_spicy && <span className="ml-2 text-sm">🌶️</span>}
+                            {!item.is_available && <span className="ml-2 text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded">Sold Out</span>}
+                        </h3>
+                        <p className="font-body text-muted-foreground mt-1">
+                            {item.description}
+                            {itemAllergens.length > 0 && (
+                                <span className="text-primary/70 font-medium"> ({itemAllergens.join(", ")})</span>
+                            )}
+                        </p>
+                    </div>
+                    <p className="font-display text-xl text-primary font-medium">
+                        {item.price}
                     </p>
                 </div>
-                <p className="font-display text-xl text-primary font-medium">
-                    {item.price}
-                </p>
             </div>
-        </div>
-    );
+        )
+    };
 
     return (
         <section id="menu" className="section-padding bg-background">
@@ -144,10 +155,41 @@ const Menu = ({ categories, menuData }: MenuProps) => {
                     </div>
                 </div>
 
-                {/* Note */}
-                <p className="text-center text-sm text-muted-foreground mt-12">
-                    🌶️ Indicates spicy dishes. Please inform us of any allergies or dietary requirements.
-                </p>
+                {/* Allergen Note & Legend */}
+                <div className="mt-12 space-y-4">
+                    <p className="text-center text-sm text-muted-foreground">
+                        🌶️ Indicates spicy dishes. Please inform us of any allergies or dietary requirements.
+                    </p>
+
+                    {allergens.length > 0 && (
+                        <div className="max-w-2xl mx-auto">
+                            <button
+                                onClick={() => setAllergensOpen(!allergensOpen)}
+                                className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-full bg-secondary text-secondary-foreground hover:bg-primary/10 transition-all duration-300 font-body text-sm uppercase tracking-wider"
+                            >
+                                Allergen Information
+                                <ChevronDown className={cn(
+                                    "w-4 h-4 transition-transform duration-300",
+                                    allergensOpen && "rotate-180"
+                                )} />
+                            </button>
+                            <div className={cn(
+                                "overflow-hidden transition-all duration-500 ease-in-out",
+                                allergensOpen ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"
+                            )}>
+                                <div className="bg-card border border-border rounded-lg p-6">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2">
+                                        {allergens.map(a => (
+                                            <p key={a.id} className="font-body text-sm text-muted-foreground">
+                                                <span className="font-medium text-foreground">{a.number}.</span> {a.name}
+                                            </p>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </section>
     );

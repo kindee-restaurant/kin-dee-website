@@ -23,6 +23,8 @@ async function getPageData() {
         { data: galleryImages },
         { data: hours },
         { data: settings },
+        { data: allergensData },
+        { data: menuItemAllergens },
     ] = await Promise.all([
         supabase.from("hero_section").select("*").single(),
         supabase.from("categories").select("*").order("display_order"),
@@ -32,6 +34,8 @@ async function getPageData() {
         supabase.from("gallery_images").select("*").order("display_order"),
         supabase.from("business_hours").select("*").order("display_order"),
         supabase.from("site_settings").select("*").single(),
+        supabase.from("allergens").select("*").order("display_order"),
+        supabase.from("menu_item_allergens").select("*"),
     ]);
 
     // Group menu items by category
@@ -46,6 +50,18 @@ async function getPageData() {
         wineData[cat.slug] = wineItems?.filter((item) => item.category_id === cat.id) || [];
     });
 
+    // Build allergen map: menu_item_id -> array of allergen number labels
+    const allergenMap: Record<string, string[]> = {};
+    if (menuItemAllergens && allergensData) {
+        menuItemAllergens.forEach((mia: { menu_item_id: string; allergen_id: string }) => {
+            const allergen = allergensData.find((a: { id: string }) => a.id === mia.allergen_id);
+            if (allergen) {
+                if (!allergenMap[mia.menu_item_id]) allergenMap[mia.menu_item_id] = [];
+                allergenMap[mia.menu_item_id].push(allergen.number);
+            }
+        });
+    }
+
     return {
         heroData,
         categories: categories || [],
@@ -55,6 +71,8 @@ async function getPageData() {
         galleryImages: galleryImages || [],
         hours: hours || [],
         settings,
+        allergens: allergensData || [],
+        allergenMap,
     };
 }
 
@@ -71,7 +89,7 @@ export default async function HomePage() {
             <Header />
             <Hero data={data.heroData} />
             <About settings={data.settings} />
-            <Menu categories={data.categories} menuData={data.menuData} />
+            <Menu categories={data.categories} menuData={data.menuData} allergens={data.allergens} allergenMap={data.allergenMap} />
             <WineList categories={data.wineCategories} wineData={data.wineData} />
             <Gallery images={data.galleryImages} />
             <Reservations settings={data.settings} hours={data.hours} />

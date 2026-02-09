@@ -21,7 +21,8 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash, Settings, Image } from "lucide-react";
+import { Plus, Pencil, Trash, Settings, Image, AlertTriangle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { revalidateHome } from "@/app/actions";
 
 interface Category {
@@ -40,6 +41,13 @@ interface MenuItem {
     price: string;
     is_spicy: boolean;
     is_available: boolean;
+    display_order: number;
+}
+
+interface Allergen {
+    id: string;
+    number: string;
+    name: string;
     display_order: number;
 }
 
@@ -66,14 +74,33 @@ export default function MenuManagementPage() {
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [uploadingCategory, setUploadingCategory] = useState(false);
 
+    // Allergen State
+    const [allergens, setAllergens] = useState<Allergen[]>([]);
+    const [itemAllergenMap, setItemAllergenMap] = useState<Record<string, string[]>>({}); // menu_item_id -> allergen_id[]
+    const [newItemAllergens, setNewItemAllergens] = useState<string[]>([]);
+    const [editItemAllergens, setEditItemAllergens] = useState<string[]>([]);
+
     const fetchData = async () => {
-        const [catsRes, itemsRes] = await Promise.all([
+        const [catsRes, itemsRes, allergensRes, miaRes] = await Promise.all([
             supabase.from("categories").select("*").order("display_order"),
             supabase.from("menu_items").select("*").order("display_order"),
+            supabase.from("allergens").select("*").order("display_order"),
+            supabase.from("menu_item_allergens").select("*"),
         ]);
 
         if (catsRes.data) setCategories(catsRes.data);
         if (itemsRes.data) setMenuItems(itemsRes.data);
+        if (allergensRes.data) setAllergens(allergensRes.data);
+
+        // Build the map: menu_item_id -> allergen_id[]
+        if (miaRes.data) {
+            const map: Record<string, string[]> = {};
+            miaRes.data.forEach((row: { menu_item_id: string; allergen_id: string }) => {
+                if (!map[row.menu_item_id]) map[row.menu_item_id] = [];
+                map[row.menu_item_id].push(row.allergen_id);
+            });
+            setItemAllergenMap(map);
+        }
         setLoading(false);
     };
 
@@ -85,18 +112,25 @@ export default function MenuManagementPage() {
 
     const handleAddItem = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { error } = await supabase.from("menu_items").insert([{
+        const { data: inserted, error } = await supabase.from("menu_items").insert([{
             ...newItem,
             display_order: menuItems.filter(m => m.category_id === newItem.category_id).length,
-        }]);
+        }]).select();
 
         if (error) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
         } else {
+            // Save allergens for the new item
+            if (inserted && inserted[0] && newItemAllergens.length > 0) {
+                await supabase.from("menu_item_allergens").insert(
+                    newItemAllergens.map(aid => ({ menu_item_id: inserted[0].id, allergen_id: aid }))
+                );
+            }
             await revalidateHome();
             toast({ title: "Success", description: "Menu item added" });
             setIsAddItemOpen(false);
             setNewItem({ category_id: "", name: "", description: "", price: "", is_spicy: false, is_available: true });
+            setNewItemAllergens([]);
             fetchData();
         }
     };
@@ -113,9 +147,17 @@ export default function MenuManagementPage() {
         if (error) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
         } else {
+            // Update allergens: delete old, insert new
+            await supabase.from("menu_item_allergens").delete().eq("menu_item_id", editingItem.id);
+            if (editItemAllergens.length > 0) {
+                await supabase.from("menu_item_allergens").insert(
+                    editItemAllergens.map(aid => ({ menu_item_id: editingItem.id, allergen_id: aid }))
+                );
+            }
             await revalidateHome();
             toast({ title: "Success", description: "Menu item updated" });
             setEditingItem(null);
+            setEditItemAllergens([]);
             fetchData();
         }
     };
@@ -292,6 +334,26 @@ export default function MenuManagementPage() {
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    <Label className="flex items-center gap-2 mb-2">
+                                        <AlertTriangle className="w-4 h-4" /> Allergens
+                                    </Label>
+                                    <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                                        {allergens.map(a => (
+                                            <label key={a.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                                                <Checkbox
+                                                    checked={newItemAllergens.includes(a.id)}
+                                                    onCheckedChange={(checked) => {
+                                                        setNewItemAllergens(prev =>
+                                                            checked ? [...prev, a.id] : prev.filter(id => id !== a.id)
+                                                        );
+                                                    }}
+                                                />
+                                                <span>{a.number}. {a.name}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
                                 <Button type="submit" className="w-full">Add Item</Button>
                             </form>
                         </DialogContent>
@@ -345,6 +407,26 @@ export default function MenuManagementPage() {
                                             />
                                             <Label>Available</Label>
                                         </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <Label className="flex items-center gap-2 mb-2">
+                                        <AlertTriangle className="w-4 h-4" /> Allergens
+                                    </Label>
+                                    <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                                        {allergens.map(a => (
+                                            <label key={a.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                                                <Checkbox
+                                                    checked={editItemAllergens.includes(a.id)}
+                                                    onCheckedChange={(checked) => {
+                                                        setEditItemAllergens(prev =>
+                                                            checked ? [...prev, a.id] : prev.filter(id => id !== a.id)
+                                                        );
+                                                    }}
+                                                />
+                                                <span>{a.number}. {a.name}</span>
+                                            </label>
+                                        ))}
                                     </div>
                                 </div>
                                 <Button type="submit" className="w-full">Update Item</Button>
@@ -419,24 +501,37 @@ export default function MenuManagementPage() {
                                     {items.length === 0 ? (
                                         <p className="text-muted-foreground text-sm">No items in this category.</p>
                                     ) : (
-                                        items.map(item => (
-                                            <div key={item.id} className="flex items-center justify-between p-3 bg-muted/50 rounded">
-                                                <div>
-                                                    <span className="font-medium">{item.name}</span>
-                                                    {item.is_spicy && <span className="ml-2">🌶️</span>}
-                                                    {!item.is_available && <span className="ml-2 text-xs text-destructive">(Unavailable)</span>}
-                                                    <span className="ml-4 text-muted-foreground">{item.price}</span>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button size="icon" variant="ghost" onClick={() => setEditingItem(item)}>
-                                                        <Pencil className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button size="icon" variant="ghost" onClick={() => handleDeleteItem(item.id)}>
-                                                        <Trash className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        ))
+                                        items.map(item => {
+                                            const itemAllergenIds = itemAllergenMap[item.id] || [];
+                                            const itemAllergenLabels = itemAllergenIds
+                                                .map(aid => allergens.find(a => a.id === aid))
+                                                .filter(Boolean)
+                                                .sort((a, b) => a!.display_order - b!.display_order)
+                                                .map(a => a!.number);
+                                            return (
+                                                <div key={item.id} className="flex items-center justify-between p-3 bg-muted/50 rounded">
+                                                    <div>
+                                                        <span className="font-medium">{item.name}</span>
+                                                        {item.is_spicy && <span className="ml-2">🌶️</span>}
+                                                        {!item.is_available && <span className="ml-2 text-xs text-destructive">(Unavailable)</span>}
+                                                        <span className="ml-4 text-muted-foreground">{item.price}</span>
+                                                        {itemAllergenLabels.length > 0 && (
+                                                            <span className="ml-3 text-xs text-amber-600">({itemAllergenLabels.join(", ")})</span>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Button size="icon" variant="ghost" onClick={() => {
+                                                            setEditingItem(item);
+                                                            setEditItemAllergens(itemAllergenMap[item.id] || []);
+                                                        }}>
+                                                            <Pencil className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button size="icon" variant="ghost" onClick={() => handleDeleteItem(item.id)}>
+                                                            <Trash className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>);
+                                        })
                                     )}
                                 </div>
                             </AccordionContent>
