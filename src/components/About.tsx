@@ -65,7 +65,7 @@ const About = ({ settings }: AboutProps) => {
                             Our Story
                         </p>
                         <h2 className="heading-section text-foreground mb-6">
-                            {settings?.about_title || <>A Culinary Journey from <em>Bangkok to Dublin</em></>}
+                            {settings?.about_title || <>A Culinary Journey through<em>Southeast Asia to Dublin</em></>}
                         </h2>
                         <div className="space-y-4 text-body text-muted-foreground whitespace-pre-line">
                             {settings?.about_text || (

@@ -42,6 +42,7 @@ interface MenuItem {
     is_spicy: boolean;
     is_available: boolean;
     display_order: number;
+    menu_type?: string;
 }
 
 interface Allergen {
@@ -67,6 +68,7 @@ export default function MenuManagementPage() {
         price: "",
         is_spicy: false,
         is_available: true,
+        menu_type: "dinner",
     });
 
     // Category Management State
@@ -129,7 +131,7 @@ export default function MenuManagementPage() {
             await revalidateHome();
             toast({ title: "Success", description: "Menu item added" });
             setIsAddItemOpen(false);
-            setNewItem({ category_id: "", name: "", description: "", price: "", is_spicy: false, is_available: true });
+            setNewItem({ category_id: "", name: "", description: "", price: "", is_spicy: false, is_available: true, menu_type: "dinner" });
             setNewItemAllergens([]);
             fetchData();
         }
@@ -300,6 +302,18 @@ export default function MenuManagementPage() {
                                     </select>
                                 </div>
                                 <div>
+                                    <Label>Menu Type</Label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={newItem.menu_type || "dinner"}
+                                        onChange={e => setNewItem({ ...newItem, menu_type: e.target.value })}
+                                        required
+                                    >
+                                        <option value="dinner">Dinner</option>
+                                        <option value="lunch">Lunch</option>
+                                    </select>
+                                </div>
+                                <div>
                                     <Label>Name</Label>
                                     <Input
                                         value={newItem.name}
@@ -368,6 +382,18 @@ export default function MenuManagementPage() {
                         </DialogHeader>
                         {editingItem && (
                             <form onSubmit={handleUpdateItem} className="space-y-4">
+                                <div>
+                                    <Label>Menu Type</Label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={editingItem.menu_type || "dinner"}
+                                        onChange={e => setEditingItem({ ...editingItem, menu_type: e.target.value })}
+                                        required
+                                    >
+                                        <option value="dinner">Dinner</option>
+                                        <option value="lunch">Lunch</option>
+                                    </select>
+                                </div>
                                 <div>
                                     <Label>Name</Label>
                                     <Input
@@ -515,6 +541,7 @@ export default function MenuManagementPage() {
                                                         {item.is_spicy && <span className="ml-2">🌶️</span>}
                                                         {!item.is_available && <span className="ml-2 text-xs text-destructive">(Unavailable)</span>}
                                                         <span className="ml-4 text-muted-foreground">{item.price}</span>
+                                                        <span className="ml-4 text-xs tracking-wider uppercase text-primary/70 border border-primary/20 px-2 py-0.5 rounded-full">{item.menu_type || "dinner"}</span>
                                                         {itemAllergenLabels.length > 0 && (
                                                             <span className="ml-3 text-xs text-amber-600">({itemAllergenLabels.join(", ")})</span>
                                                         )}

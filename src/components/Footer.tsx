@@ -23,9 +23,9 @@ const Footer = ({ hours = [], settings }: FooterProps) => {
                     <div className="lg:col-span-2">
                         <h3 className="font-display font-bold text-3xl mb-4 uppercase tracking-widest">Kin Dee</h3>
                         <p className="text-primary-foreground/70 max-w-md mb-6">
-                            Thai & Asian Fusion cuisine in the heart of Dublin.
-                            Experience the authentic flavours of Thailand reimagined
-                            with contemporary Asian influences.
+                            South East Asian Cuisine in the heart of Dublin.
+                            Experience the authentic flavours reimagined
+                            with contemporary influences.
                         </p>
                         <div className="flex gap-4">
                             <a
@@ -106,7 +106,7 @@ const Footer = ({ hours = [], settings }: FooterProps) => {
                         © {currentYear} Kin Dee Restaurant. All rights reserved.
                     </p>
                     <p className="text-sm text-primary-foreground/50">
-                        Thai Restaurant Dublin | Asian Fusion Leeson Street
+                        South East Asian Cuisine Restaurant Dublin | Leeson Street
                     </p>
                 </div>
             </div>

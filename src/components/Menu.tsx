@@ -11,7 +11,7 @@ import dishSoup from "@/assets/menu-thai-asian-fusion.webp";
 import dishDessert from "@/assets/menu-deserts.webp";
 
 type MenuCategory = { id: string; slug: string; label: string; image_url?: string };
-type MenuItem = { id: string; name: string; description?: string; price: string; is_spicy?: boolean; is_available?: boolean };
+type MenuItem = { id: string; name: string; description?: string; price: string; is_spicy?: boolean; is_available?: boolean; menu_type?: string };
 type Allergen = { id: string; number: string; name: string; display_order: number };
 
 const categoryImages: Record<string, any> = {
@@ -29,20 +29,24 @@ interface MenuProps {
 }
 
 const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
-    const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || "starters");
+    const [activeMenuType, setActiveMenuType] = useState<"lunch" | "dinner">("dinner");
+    const [activeCategory, setActiveCategory] = useState<string>("starters");
     const [allergensOpen, setAllergensOpen] = useState(false);
     const { ref: menuRef, isVisible: menuVisible } = useScrollAnimation({ threshold: 0.1 });
 
     if (categories.length === 0) return null;
 
-    const items = menuData[activeCategory] || [];
+    // Filter items based on activeMenuType (defaulting items without menu_type to 'dinner')
+    const filteredItems = (menuData[activeCategory] || []).filter(
+        (item) => (item.menu_type || "dinner") === activeMenuType
+    );
     const SPLIT_THRESHOLD = 5;
     const IMAGE_HEIGHT_EQUIVALENT = 4;
-    const shouldSplit = items.length > SPLIT_THRESHOLD;
+    const shouldSplit = filteredItems.length > SPLIT_THRESHOLD;
 
-    const rightCount = shouldSplit ? Math.floor((items.length + IMAGE_HEIGHT_EQUIVALENT) / 2) : items.length;
-    const rightColumnItems = items.slice(0, rightCount);
-    const leftColumnItems = shouldSplit ? items.slice(rightCount) : [];
+    const rightCount = shouldSplit ? Math.floor((filteredItems.length + IMAGE_HEIGHT_EQUIVALENT) / 2) : filteredItems.length;
+    const rightColumnItems = filteredItems.slice(0, rightCount);
+    const leftColumnItems = shouldSplit ? filteredItems.slice(rightCount) : [];
 
     const renderMenuItem = (item: MenuItem) => {
         const itemAllergens = allergenMap[item.id] || [];
@@ -85,39 +89,89 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
                         A Taste of <em>Thailand & Beyond</em>
                     </h2>
                     <p className="text-body text-muted-foreground max-w-2xl mx-auto">
-                        From authentic Thai classics to innovative Asian fusion creations,
-                        each dish is crafted with passion and the finest ingredients.
+                        From authentic Thai, Vietnamese and Malay classics to more innovative creations,
+                        each dish is crafted with passion and the finest ingredients, ensuring you "Eat Well".
                     </p>
                 </div>
 
-                {/* Category Tabs */}
-                <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 mb-8 lg:static lg:bg-transparent lg:p-0 lg:mb-12 flex flex-wrap justify-center gap-2 transition-all">
-                    {categories.map((category) => (
+                {/* Lunch / Dinner Toggle */}
+                <div className="flex justify-center mb-8">
+                    <div className="bg-secondary p-1 rounded-full inline-flex">
                         <button
-                            key={category.slug}
                             onClick={() => {
-                                setActiveCategory(category.slug);
-                                const menuContainer = document.getElementById("menu-content");
-                                if (menuContainer) {
-                                    const headerOffset = 150;
-                                    const elementPosition = menuContainer.getBoundingClientRect().top;
-                                    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-                                    if (window.scrollY > offsetPosition) {
-                                        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                                    }
-                                }
+                                setActiveMenuType("lunch");
+                                setActiveCategory("starters");
                             }}
                             className={cn(
-                                "px-6 py-3 font-body text-sm uppercase tracking-wider rounded-full transition-all duration-300",
-                                activeCategory === category.slug
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-secondary text-secondary-foreground hover:bg-primary/10"
+                                "px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
+                                activeMenuType === "lunch" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary"
                             )}
                         >
-                            {category.label}
+                            Lunch
                         </button>
-                    ))}
+                        <button
+                            onClick={() => {
+                                setActiveMenuType("dinner");
+                                setActiveCategory("starters");
+                            }}
+                            className={cn(
+                                "px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
+                                activeMenuType === "dinner" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary"
+                            )}
+                        >
+                            Dinner
+                        </button>
+                    </div>
                 </div>
+
+                {/* Category Tabs */}
+                <div className="sticky top-16 z-40 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 mb-4 lg:static lg:bg-transparent lg:p-0 lg:mb-8 flex flex-wrap justify-center gap-2 transition-all">
+                    {categories
+                        // Only show categories that have items for the currently active menu_type
+                        .filter(
+                            (category) =>
+                                (menuData[category.slug] || []).filter(
+                                    (item) => (item.menu_type || "dinner") === activeMenuType
+                                ).length > 0
+                        )
+                        .map((category) => (
+                            <button
+                                key={category.slug}
+                                onClick={() => {
+                                    setActiveCategory(category.slug);
+                                    const menuContainer = document.getElementById("menu-content");
+                                    if (menuContainer) {
+                                        const headerOffset = 150;
+                                        const elementPosition = menuContainer.getBoundingClientRect().top;
+                                        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+                                        if (window.scrollY > offsetPosition) {
+                                            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                                        }
+                                    }
+                                }}
+                                className={cn(
+                                    "px-6 py-2.5 font-body text-sm uppercase tracking-wider rounded-full transition-all duration-300",
+                                    activeCategory === category.slug
+                                        ? "bg-foreground text-background"
+                                        : "bg-surface text-muted-foreground border border-border hover:border-primary/50"
+                                )}
+                            >
+                                {category.label}
+                            </button>
+                        ))}
+                </div>
+
+                {/* Dynamic Category Subtitle */}
+                {activeMenuType === "lunch" && activeCategory === "starters" && (
+                    <p className="text-center font-body text-primary/80 mb-8 italic">
+                        All €9.00 or 3 for €24.00
+                    </p>
+                )}
+                {activeMenuType === "lunch" && activeCategory === "mains" && (
+                    <p className="text-center font-body text-primary/80 mb-8 italic">
+                        All €18.00 (rice free with all dishes beside noodles)
+                    </p>
+                )}
 
                 {/* Menu Content */}
                 <div id="menu-content" className="grid lg:grid-cols-2 gap-12 items-start scroll-mt-32">
@@ -140,12 +194,12 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
 
                     {/* Right Column: Primary Items */}
                     <div className="space-y-6">
-                        {items.length === 0 ? (
+                        {filteredItems.length === 0 ? (
                             <p className="text-muted-foreground text-center py-10">No items available in this category yet.</p>
                         ) : (
                             <>
                                 <div className="lg:hidden space-y-6">
-                                    {items.map(renderMenuItem)}
+                                    {filteredItems.map(renderMenuItem)}
                                 </div>
                                 <div className="hidden lg:block space-y-6">
                                     {rightColumnItems.map(renderMenuItem)}

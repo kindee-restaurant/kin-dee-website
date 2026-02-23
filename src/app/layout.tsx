@@ -13,16 +13,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: "Kin Dee | Thai & Asian Fusion Restaurant Dublin | Leeson Street",
+        default: "Kin Dee | South East Asian Cuisine Restaurant Dublin | Leeson Street",
         template: "%s | Kin Dee Restaurant Dublin",
     },
     description:
-        "Kin Dee is Dublin's premier Thai and Asian Fusion restaurant on Leeson Street. Experience authentic Thai classics and innovative fusion cuisine in an elegant setting. Book your table today.",
+        "Kin Dee is Dublin's premier South East Asian Cuisine restaurant on Leeson Street. Experience authentic classics and innovative creations in an elegant setting. Book your table today.",
     keywords: [
-        "Thai restaurant Dublin",
-        "Asian fusion Leeson Street",
-        "Thai food Dublin",
-        "best Thai restaurant Dublin",
+        "South East Asian restaurant Dublin",
+        "South East Asian Cuisine Leeson Street",
+        "South East Asian food Dublin",
+        "best South East Asian restaurant Dublin",
         "Kin Dee Dublin",
         "Asian restaurant Dublin 2",
     ],
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
         locale: "en_IE",
         url: "https://kindee.ie",
         siteName: "Kin Dee Restaurant",
-        title: "Kin Dee | Thai & Asian Fusion Restaurant Dublin",
+        title: "Kin Dee | South East Asian Cuisine Restaurant Dublin",
         description:
-            "Experience authentic Thai classics and innovative Asian fusion cuisine at Dublin's premier restaurant on Leeson Street.",
+            "Experience authentic classics and innovative South East Asian cuisine at Dublin's premier restaurant on Leeson Street.",
         images: [
             {
                 url: "/og-image.jpg",
@@ -51,9 +51,9 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "Kin Dee | Thai & Asian Fusion Restaurant Dublin",
+        title: "Kin Dee | South East Asian Cuisine Restaurant Dublin",
         description:
-            "Experience authentic Thai classics and innovative Asian fusion cuisine at Dublin's premier restaurant on Leeson Street.",
+            "Experience authentic classics and innovative South East Asian cuisine at Dublin's premier restaurant on Leeson Street.",
         images: ["/og-image.jpg"],
     },
     robots: {
@@ -84,7 +84,7 @@ const restaurantSchema = {
         "https://kindee.ie/images/food-hero.jpg",
     ],
     description:
-        "Thai and Asian Fusion restaurant in Dublin offering authentic Thai classics and innovative fusion cuisine in an elegant setting on Leeson Street.",
+        "South East Asian Cuisine restaurant in Dublin offering authentic classics and innovative creations in an elegant setting on Leeson Street.",
     address: {
         "@type": "PostalAddress",
         streetAddress: "133 Leeson Street Upper",

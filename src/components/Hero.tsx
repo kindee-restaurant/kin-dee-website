@@ -18,8 +18,8 @@ const Hero = ({ data }: HeroProps) => {
     const [scrollY, setScrollY] = useState(0);
 
     const heroData = {
-        title: data?.title || "Where Thai Tradition Meets Modern Fusion",
-        subtitle: data?.subtitle || "Thai & Asian Fusion / Leeson Street Upper, Dublin",
+        title: data?.title || "Where Tradition Meets Modern Fusion",
+        subtitle: data?.subtitle || "South East Asian Cuisine / Leeson Street Upper, Dublin",
         image_url: data?.image_url || heroFood,
         button_text: data?.button_text || "Reserve Your Table",
     };
@@ -66,7 +66,7 @@ const Hero = ({ data }: HeroProps) => {
                     </h1>
 
                     <p className="text-body text-primary-foreground/80 max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.6s" }}>
-                        Experience the authentic flavours of Thailand reimagined with contemporary Asian influences,
+                        Experience the authentic flavours of South East Asia reimagined with contemporary influences,
                         in the heart of Dublin's most vibrant dining district.
                     </p>
 
