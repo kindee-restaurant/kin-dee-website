@@ -41,10 +41,11 @@ const Reservations = ({ settings, hours = [] }: ReservationsProps) => {
         // No cleanup needed for script injection as it persists, but we clear innerHTML on mount if needed
     }, []);
 
-    const formattedHours = hours.length > 0 ? hours : [
-        { id: "1", day_range: "Mon - Thu", hours: "5pm - 10pm" },
-        { id: "2", day_range: "Fri - Sat", hours: "5pm - 11pm" },
-        { id: "3", day_range: "Sunday", hours: "1pm - 9pm" },
+    const formattedHours = [
+        { id: "1", day_range: "Wed - Thu", hours: "12pm - 10pm" },
+        { id: "2", day_range: "Fri - Sat", hours: "12pm - 11pm" },
+        { id: "3", day_range: "Sun", hours: "1pm - 9pm" },
+        { id: "4", day_range: "Mon - Tue", hours: "Closed" },
     ];
 
     return (

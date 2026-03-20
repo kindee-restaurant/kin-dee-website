@@ -12,7 +12,7 @@ const defaultFAQs: FAQItem[] = [
     },
     {
         question: "What are Kin Dee's opening hours?",
-        answer: "We are open Monday to Thursday 5pm-10pm, Friday and Saturday 5pm-11pm, and Sunday 1pm-9pm.",
+        answer: "We are open Wednesday to Thursday 12pm-10pm, Friday and Saturday 12pm-11pm, and Sunday 1pm-9pm. Closed Monday and Tuesday.",
     },
     {
         question: "Where is Kin Dee restaurant located?",

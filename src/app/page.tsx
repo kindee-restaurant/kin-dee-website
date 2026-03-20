@@ -92,9 +92,9 @@ export default async function HomePage() {
             <Menu categories={data.categories} menuData={data.menuData} allergens={data.allergens} allergenMap={data.allergenMap} />
             <WineList categories={data.wineCategories} wineData={data.wineData} />
             <Gallery images={data.galleryImages} />
-            <Reservations settings={data.settings} hours={data.hours} />
-            <Contact settings={data.settings} hours={data.hours} />
-            <Footer hours={data.hours} settings={data.settings} />
+            <Reservations settings={data.settings} />
+            <Contact settings={data.settings} />
+            <Footer settings={data.settings} />
         </main>
     );
 }

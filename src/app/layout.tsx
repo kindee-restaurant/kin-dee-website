@@ -108,14 +108,14 @@ const restaurantSchema = {
     openingHoursSpecification: [
         {
             "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"],
-            opens: "17:00",
+            dayOfWeek: ["Wednesday", "Thursday"],
+            opens: "12:00",
             closes: "22:00",
         },
         {
             "@type": "OpeningHoursSpecification",
             dayOfWeek: ["Friday", "Saturday"],
-            opens: "17:00",
+            opens: "12:00",
             closes: "23:00",
         },
         {
