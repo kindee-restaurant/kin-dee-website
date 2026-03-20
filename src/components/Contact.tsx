@@ -119,10 +119,11 @@ const Contact = ({ settings, hours = [] }: ContactProps) => {
                                         <p key={h.id}>{h.day_range}: {h.hours}</p>
                                     )) : (
                                         <>
+                                            <p>Monday: 12:00 PM - 9:00 PM</p>
                                             <p>Wednesday - Thursday: 12:00 PM - 10:00 PM</p>
                                             <p>Friday - Saturday: 12:00 PM - 11:00 PM</p>
                                             <p>Sunday: 1:00 PM - 9:00 PM</p>
-                                            <p>Monday - Tuesday: Closed</p>
+                                            <p>Tuesday: Closed</p>
                                         </>
                                     )}
                                 </div>

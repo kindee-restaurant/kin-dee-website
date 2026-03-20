@@ -42,10 +42,11 @@ const Reservations = ({ settings, hours = [] }: ReservationsProps) => {
     }, []);
 
     const formattedHours = [
-        { id: "1", day_range: "Wed - Thu", hours: "12pm - 10pm" },
-        { id: "2", day_range: "Fri - Sat", hours: "12pm - 11pm" },
-        { id: "3", day_range: "Sun", hours: "1pm - 9pm" },
-        { id: "4", day_range: "Mon - Tue", hours: "Closed" },
+        { id: "1", day_range: "Monday", hours: "12pm - 9pm" },
+        { id: "2", day_range: "Wed - Thu", hours: "12pm - 10pm" },
+        { id: "3", day_range: "Fri - Sat", hours: "12pm - 11pm" },
+        { id: "4", day_range: "Sun", hours: "1pm - 9pm" },
+        { id: "5", day_range: "Tuesday", hours: "Closed" },
     ];
 
     return (

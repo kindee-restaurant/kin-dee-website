@@ -83,10 +83,11 @@ const Footer = ({ hours = [], settings }: FooterProps) => {
                                 ))
                             ) : (
                                 <>
+                                    <li>Mon: 12pm - 9pm</li>
                                     <li>Wed - Thu: 12pm - 10pm</li>
                                     <li>Fri - Sat: 12pm - 11pm</li>
                                     <li>Sunday: 1pm - 9pm</li>
-                                    <li>Mon - Tue: Closed</li>
+                                    <li>Tuesday: Closed</li>
                                 </>
                             )}
                         </ul>
