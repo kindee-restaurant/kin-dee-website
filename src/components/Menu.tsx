@@ -29,7 +29,7 @@ interface MenuProps {
 }
 
 const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
-    const [activeMenuType, setActiveMenuType] = useState<"lunch" | "dinner">("dinner");
+    const [activeMenuType, setActiveMenuType] = useState<"lunch" | "dinner" | "takeaway">("dinner");
     const [activeCategory, setActiveCategory] = useState<string>("starters");
     const [allergensOpen, setAllergensOpen] = useState(false);
     const { ref: menuRef, isVisible: menuVisible } = useScrollAnimation({ threshold: 0.1 });
@@ -37,8 +37,9 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
     if (categories.length === 0) return null;
 
     // Filter items based on activeMenuType (defaulting items without menu_type to 'dinner')
+    const currentMenuTypeFilter = activeMenuType === "takeaway" ? "lunch" : activeMenuType;
     const filteredItems = (menuData[activeCategory] || []).filter(
-        (item) => (item.menu_type || "dinner") === activeMenuType
+        (item) => (item.menu_type || "dinner") === currentMenuTypeFilter
     );
     const SPLIT_THRESHOLD = 5;
     const IMAGE_HEIGHT_EQUIVALENT = 4;
@@ -94,17 +95,17 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
                     </p>
                 </div>
 
-                {/* Lunch / Dinner Toggle */}
+                {/* Lunch / Dinner / Take Away Toggle */}
                 <div className="flex justify-center mb-8">
-                    <div className="bg-secondary p-1 rounded-full inline-flex">
+                    <div className="bg-secondary p-1 rounded-[2rem] sm:rounded-full inline-flex flex-wrap sm:flex-nowrap justify-center gap-1">
                         <button
                             onClick={() => {
                                 setActiveMenuType("lunch");
                                 setActiveCategory("starters");
                             }}
                             className={cn(
-                                "px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
-                                activeMenuType === "lunch" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary"
+                                "px-6 sm:px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
+                                activeMenuType === "lunch" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary whitespace-nowrap"
                             )}
                         >
                             Lunch
@@ -115,11 +116,23 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
                                 setActiveCategory("starters");
                             }}
                             className={cn(
-                                "px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
-                                activeMenuType === "dinner" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary"
+                                "px-6 sm:px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
+                                activeMenuType === "dinner" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary whitespace-nowrap"
                             )}
                         >
                             Dinner
+                        </button>
+                        <button
+                            onClick={() => {
+                                setActiveMenuType("takeaway");
+                                setActiveCategory("starters");
+                            }}
+                            className={cn(
+                                "px-6 sm:px-8 py-2.5 rounded-full font-body text-sm uppercase tracking-wider transition-all duration-300",
+                                activeMenuType === "takeaway" ? "bg-primary text-primary-foreground shadow-sm" : "hover:text-primary whitespace-nowrap"
+                            )}
+                        >
+                            Take Away
                         </button>
                     </div>
                 </div>
@@ -131,7 +144,7 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
                         .filter(
                             (category) =>
                                 (menuData[category.slug] || []).filter(
-                                    (item) => (item.menu_type || "dinner") === activeMenuType
+                                    (item) => (item.menu_type || "dinner") === (activeMenuType === "takeaway" ? "lunch" : activeMenuType)
                                 ).length > 0
                         )
                         .map((category) => (
@@ -162,12 +175,12 @@ const Menu = ({ categories, menuData, allergens, allergenMap }: MenuProps) => {
                 </div>
 
                 {/* Dynamic Category Subtitle */}
-                {activeMenuType === "lunch" && activeCategory === "starters" && (
+                {(activeMenuType === "lunch" || activeMenuType === "takeaway") && activeCategory === "starters" && (
                     <p className="text-center font-body text-primary/80 mb-8 italic">
                         All €9.00 or 3 for €24.00
                     </p>
                 )}
-                {activeMenuType === "lunch" && activeCategory === "mains" && (
+                {(activeMenuType === "lunch" || activeMenuType === "takeaway") && activeCategory === "mains" && (
                     <p className="text-center font-body text-primary/80 mb-8 italic">
                         All €18.00 (rice free with all dishes beside noodles)
                     </p>

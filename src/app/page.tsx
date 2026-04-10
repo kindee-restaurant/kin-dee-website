@@ -5,6 +5,7 @@ import Menu from "@/components/Menu";
 import WineList from "@/components/WineList";
 import Gallery from "@/components/Gallery";
 import Reservations from "@/components/Reservations";
+import Catering from "@/components/Catering";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import { MenuSchema, FAQSchema } from "@/components/seo";
@@ -93,6 +94,7 @@ export default async function HomePage() {
             <WineList categories={data.wineCategories} wineData={data.wineData} />
             <Gallery images={data.galleryImages} />
             <Reservations settings={data.settings} />
+            <Catering settings={data.settings} />
             <Contact settings={data.settings} />
             <Footer settings={data.settings} />
         </main>

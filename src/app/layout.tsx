@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { AuthProvider } from "@/components/AuthProvider";
+import FloatingCTAs from "@/components/FloatingCTAs";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -222,6 +223,7 @@ export default function RootLayout({
                             <Toaster />
                             <Sonner />
                             {children}
+                            <FloatingCTAs />
                         </TooltipProvider>
                     </AuthProvider>
                 </QueryProvider>
