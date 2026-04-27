@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { AuthGuard } from "@/components/admin/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash } from "lucide-react";
@@ -94,6 +95,7 @@ export default function GalleryManagementPage() {
     };
 
     return (
+        <AuthGuard>
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-display">Gallery Management</h1>
@@ -131,6 +133,9 @@ export default function GalleryManagementPage() {
                                 alt={image.alt_text}
                                 className="w-full h-48 object-cover"
                             />
+                            <div className="p-2 text-sm text-center">
+                                {image.alt_text}
+                            </div>
                             <Button
                                 size="icon"
                                 variant="destructive"
@@ -144,5 +149,6 @@ export default function GalleryManagementPage() {
                 </div>
             )}
         </div>
+        </AuthGuard>
     );
 }
