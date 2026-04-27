@@ -3,6 +3,7 @@
 import { revalidateHome } from "@/app/actions";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { AuthGuard } from "@/components/admin/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,6 +111,8 @@ export default function HeroManagementPage() {
     if (loading && !heroData) return <p className="text-muted-foreground p-8">Loading settings...</p>;
 
     return (
+        <AuthGuard>
+        <>
         <div className="space-y-6 max-w-4xl">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-display">Hero Configuration</h1>
@@ -211,5 +214,7 @@ export default function HeroManagementPage() {
                 </form>
             )}
         </div>
+        </>
+        </AuthGuard>
     );
 }

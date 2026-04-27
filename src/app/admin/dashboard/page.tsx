@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { AuthGuard } from "@/components/admin/AuthGuard";
 import {
     Table,
     TableBody,
@@ -202,6 +203,7 @@ export default function DashboardPage() {
     );
 
     return (
+        <AuthGuard>
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-display">Bookings Dashboard</h1>
@@ -477,5 +479,6 @@ export default function DashboardPage() {
                 </Table>
             </div>
         </div>
+        </AuthGuard>
     );
 }

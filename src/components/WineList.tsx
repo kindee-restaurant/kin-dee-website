@@ -1,72 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { Wine } from "lucide-react";
+import { Wine, ExternalLink } from "lucide-react";
 
-type WineCategory = { id: string; slug: string; label: string; description?: string };
-type WineItem = { id: string; name: string; origin?: string; size?: string; price_glass?: string; price_bottle: string };
-
-interface WineListProps {
-    categories: WineCategory[];
-    wineData: Record<string, WineItem[]>;
+interface Menu {
+    id: string;
+    title: string;
+    slug: string;
+    description?: string;
+    image_url?: string;
+    pdf_url?: string;
 }
 
-const WineList = ({ categories, wineData }: WineListProps) => {
-    const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.slug || "sparkling");
+interface WineListProps {
+    menus: Menu[];
+}
 
-    if (categories.length === 0) return null;
+const WineList = ({ menus }: WineListProps) => {
+    const wineMenu = menus.find(m => m.slug === "wine");
 
-    const activeCategoryData = categories.find(c => c.slug === activeCategory);
-    const items = wineData[activeCategory] || [];
-
-    const scrollToContent = () => {
-        const menuContainer = document.getElementById("wine-content");
-        if (menuContainer) {
-            const headerOffset = 150;
-            const elementPosition = menuContainer.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.scrollY - headerOffset;
-            if (window.scrollY > offsetPosition) {
-                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-            }
-        }
-    };
-
-    const renderWineItem = (item: WineItem) => (
-        <div
-            key={item.id}
-            className="group p-6 bg-[#252525] rounded-lg border border-[#333] hover:border-[#722F37] transition-all duration-300"
-        >
-            <div className="flex justify-between items-start gap-4">
-                <div className="flex-1">
-                    <h3 className="font-display text-xl text-[#f5f0e8] group-hover:text-[#C4A35A] transition-colors">
-                        {item.name}
-                        {item.size && <span className="text-sm text-muted-foreground ml-2 font-sans font-normal opacity-70">({item.size})</span>}
-                    </h3>
-                    {item.origin && (
-                        <p className="font-body text-sm text-[#a89f91] mt-1">
-                            {item.origin}
-                        </p>
-                    )}
-                </div>
-                <div className="text-right font-display text-xl whitespace-nowrap">
-                    {item.price_glass && (
-                        <p className="text-sm text-[#a89f91] mb-1">
-                            {item.price_glass}
-                        </p>
-                    )}
-                    <p className="text-[#C4A35A] font-medium">
-                        {item.price_bottle}
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
+    if (!wineMenu) return null;
 
     return (
         <section id="wines" className="section-padding bg-[#1a1a1a] text-[#f5f0e8]">
             <div className="container-custom">
-                {/* Header */}
                 <div className="text-center mb-12">
                     <p className="font-body text-xs uppercase tracking-[0.2em] text-[#C4A35A] mb-2">
                         Kin Dee
@@ -79,57 +35,47 @@ const WineList = ({ categories, wineData }: WineListProps) => {
                     </p>
                 </div>
 
-                {/* Category Tabs - Sticky on Mobile */}
-                <div className="sticky top-16 z-40 bg-[#1a1a1a]/95 backdrop-blur-sm py-4 -mx-4 px-4 mb-8 lg:static lg:bg-transparent lg:p-0 lg:mb-16 flex flex-wrap justify-center gap-3 transition-all">
-                    {categories.map((category) => (
-                        <button
-                            key={category.slug}
-                            onClick={() => {
-                                setActiveCategory(category.slug);
-                                scrollToContent();
-                            }}
-                            className={cn(
-                                "px-6 py-2.5 font-body text-xs uppercase tracking-wider rounded-full transition-all duration-300 border border-transparent",
-                                activeCategory === category.slug
-                                    ? "bg-[#722F37] text-white shadow-lg"
-                                    : "bg-[#333] text-[#a89f91] hover:bg-[#444] hover:text-white"
+                <div className="max-w-md mx-auto">
+                    <a
+                        href={wineMenu.pdf_url || "#"}
+                        target={wineMenu.pdf_url ? "_blank" : undefined}
+                        rel={wineMenu.pdf_url ? "noopener noreferrer" : undefined}
+                        className="group block relative overflow-hidden rounded-xl bg-[#252525] border border-[#333] hover:border-[#722F37] transition-all duration-500"
+                    >
+                        <div className="aspect-[4/3] relative overflow-hidden">
+                            {wineMenu.image_url ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={wineMenu.image_url}
+                                    alt={wineMenu.title}
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                            ) : (
+                                <div className="absolute inset-0 bg-[#2a2522] flex items-center justify-center">
+                                    <Wine className="w-20 h-20 text-[#C4A35A]/30" strokeWidth={1} />
+                                </div>
                             )}
-                        >
-                            {category.label}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Split Layout Content */}
-                <div id="wine-content" className="grid lg:grid-cols-3 gap-12 lg:gap-20 items-start scroll-mt-32">
-
-                    {/* Left Column: Category Info - Sticky on Desktop */}
-                    <div className="text-center lg:text-center animate-fade-in lg:sticky lg:top-32">
-                        <div className="w-32 h-32 rounded-full bg-[#2a2522] flex items-center justify-center text-[#C4A35A] mx-auto mb-6 border border-[#C4A35A]/20">
-                            <Wine className="w-12 h-12" strokeWidth={1.5} />
-                        </div>
-                        <h3 className="font-display text-3xl text-white mb-4">
-                            {activeCategoryData?.label}
-                        </h3>
-                        <p className="text-[#a89f91] max-w-sm mx-auto leading-relaxed">
-                            {activeCategoryData?.description || "Celebrate with our selection of fine wines chosen to pair perfectly with spicy and aromatic Thai flavours."}
-                        </p>
-                    </div>
-
-                    {/* Right Column: Wine Items */}
-                    <div className="lg:col-span-2 space-y-4">
-                        {items.length === 0 ? (
-                            <div className="text-center py-12 border border-dashed border-[#333] rounded-lg">
-                                <p className="text-[#a89f91]">No wines available in this category yet.</p>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 className="font-display text-2xl text-white group-hover:text-[#C4A35A] transition-colors">
+                                    {wineMenu.title}
+                                </h3>
+                                {wineMenu.description && (
+                                    <p className="text-sm text-[#a89f91] mt-2">
+                                        {wineMenu.description}
+                                    </p>
+                                )}
                             </div>
-                        ) : (
-                            items.map(renderWineItem)
-                        )}
-                    </div>
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <div className="w-16 h-16 rounded-full bg-[#722F37] text-white flex items-center justify-center shadow-lg">
+                                    <ExternalLink className="w-7 h-7" />
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
 
-                {/* Footer Note */}
-                <p className="text-center text-xs text-[#555] mt-16 max-w-xl mx-auto">
+                <p className="text-center text-xs text-[#555] mt-16">
                     All wines are subject to availability. Please ask your server for recommendations.
                 </p>
             </div>

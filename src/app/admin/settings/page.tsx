@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { AuthGuard } from "@/components/admin/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -107,6 +108,7 @@ export default function SettingsPage() {
     }
 
     return (
+        <AuthGuard>
         <div className="space-y-6 max-w-3xl">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-display">Site Settings</h1>
@@ -249,5 +251,6 @@ export default function SettingsPage() {
                 {saving ? "Saving..." : "Save Settings"}
             </Button>
         </div>
+        </AuthGuard>
     );
 }

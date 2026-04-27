@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
     UtensilsCrossed,
@@ -11,8 +8,6 @@ import {
     Settings,
     LogOut,
     Home,
-    Menu,
-    Wine,
     Sparkles,
 } from "lucide-react";
 import {
@@ -31,68 +26,37 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/admin/ThemeToggle";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const menuItems = [
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
     { title: "Hero", icon: Sparkles, href: "/admin/hero" },
     { title: "Menu", icon: UtensilsCrossed, href: "/admin/menu" },
-    { title: "Wine List", icon: Wine, href: "/admin/wine" },
     { title: "Gallery", icon: ImageIcon, href: "/admin/gallery" },
     { title: "Settings", icon: Settings, href: "/admin/settings" },
 ];
+
+const publicRoutes = ["/admin/login", "/admin/forgot-password", "/admin/reset-password"];
 
 export default function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const pathname = usePathname() || "";
     const router = useRouter();
-    const pathname = usePathname();
-    const [loading, setLoading] = useState(true);
+    const supabase = createClient();
 
-    useEffect(() => {
-        // Bypass auth check on login page
-        if (pathname === "/admin/login") {
-            setLoading(false);
-            return;
-        }
-
-        const checkAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                router.push("/admin/login");
-            } else {
-                setLoading(false);
-            }
-        };
-        checkAuth();
-
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (_event: AuthChangeEvent, session: Session | null) => {
-                if (!session) {
-                    router.push("/admin/login");
-                }
-            }
-        );
-
-        return () => subscription.unsubscribe();
-    }, [router]);
+    const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
         router.push("/admin/login");
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-background">
-                <div className="animate-pulse text-muted-foreground">Loading...</div>
-            </div>
-        );
-    }
-
-    if (pathname === "/admin/login") {
+    if (isPublicRoute) {
         return <>{children}</>;
     }
 
