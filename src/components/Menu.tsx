@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText } from "lucide-react";
+import { FileText, Star } from "lucide-react";
 
 interface Menu {
     id: string;
@@ -10,6 +10,7 @@ interface Menu {
     image_url?: string;
     pdf_url?: string;
     is_visible?: boolean;
+    is_special?: boolean;
 }
 
 interface MenuProps {
@@ -37,10 +38,21 @@ const Menu = ({ menus }: MenuProps) => {
                             href={menu.pdf_url || "#"}
                             target={menu.pdf_url ? "_blank" : undefined}
                             rel={menu.pdf_url ? "noopener noreferrer" : undefined}
-                            className="group block bg-card border border-border hover:border-primary rounded-xl overflow-hidden transition-all duration-500 hover:shadow-lg hover:shadow-primary/10"
+                            className={`group relative block rounded-xl overflow-hidden transition-all duration-500 hover:shadow-lg ${
+                                menu.is_special 
+                                    ? "border-2 border-primary bg-gradient-to-br from-primary/10 to-transparent scale-105 shadow-primary/20 hover:shadow-primary/40 z-10 animate-[special-glow_4s_ease-in-out_infinite]" 
+                                    : "bg-card border border-border hover:border-primary shadow-primary/10"
+                            }`}
                         >
+                            {menu.is_special && (
+                                <div className="absolute top-3 right-3 z-10 bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 animate-[badge-pulse_2s_ease-in-out_infinite]">
+                                    <Star className="w-3 h-3 fill-current" /> SPECIAL
+                                </div>
+                            )}
                             <div className="p-6">
-                                <h3 className="font-display text-2xl text-foreground group-hover:text-primary transition-colors">
+                                <h3 className={`font-display text-2xl transition-colors ${
+                                    menu.is_special ? "text-primary" : "text-foreground group-hover:text-primary"
+                                }`}>
                                     {menu.title}
                                 </h3>
                                 {menu.description && (
@@ -54,10 +66,10 @@ const Menu = ({ menus }: MenuProps) => {
                                 <img
                                     src={menu.image_url}
                                     alt={menu.title}
-                                    className="w-full aspect-[4/3] object-cover transition-transform duration-700 group-hover:scale-105"
+                                    className="w-full md:aspect-[4/3] aspect-[3/2] object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
                             ) : (
-                                <div className="w-full aspect-[4/3] bg-secondary flex items-center justify-center">
+                                <div className="w-full md:aspect-[4/3] aspect-[3/2] bg-secondary flex items-center justify-center">
                                     <FileText className="w-16 h-16 text-muted-foreground/30" />
                                 </div>
                             )}

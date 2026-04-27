@@ -16,7 +16,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash, Image, FileText, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash, Image, FileText, GripVertical, Star } from "lucide-react";
 import { revalidateHome } from "@/app/actions";
 
 interface Menu {
@@ -28,6 +28,7 @@ interface Menu {
     pdf_url?: string;
     display_order: number;
     is_visible: boolean;
+    is_special: boolean;
 }
 
 export default function MenuManagementPage() {
@@ -45,6 +46,7 @@ export default function MenuManagementPage() {
         slug: "",
         description: "",
         is_visible: true,
+        is_special: false,
     });
     const [tempImageUrl, setTempImageUrl] = useState<string>("");
     const [tempPdfUrl, setTempPdfUrl] = useState<string>("");
@@ -143,7 +145,7 @@ export default function MenuManagementPage() {
             toast({ title: "Success", description: editingMenu ? "Menu updated" : "Menu created" });
             setIsDialogOpen(false);
             setEditingMenu(null);
-            setFormData({ title: "", slug: "", description: "", is_visible: true });
+            setFormData({ title: "", slug: "", description: "", is_visible: true, is_special: false });
             fetchMenus();
         }
     };
@@ -170,10 +172,11 @@ export default function MenuManagementPage() {
                 slug: menu.slug,
                 description: menu.description || "",
                 is_visible: menu.is_visible,
+                is_special: menu.is_special,
             });
         } else {
             setEditingMenu(null);
-            setFormData({ title: "", slug: "", description: "", is_visible: true });
+            setFormData({ title: "", slug: "", description: "", is_visible: true, is_special: false });
         }
         setIsDialogOpen(true);
     };
@@ -227,6 +230,9 @@ export default function MenuManagementPage() {
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
+                                {menu.is_special && (
+                                    <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full font-medium">Special</span>
+                                )}
                                 {!menu.is_visible && (
                                     <span className="text-xs text-muted-foreground">Hidden</span>
                                 )}
@@ -356,6 +362,14 @@ export default function MenuManagementPage() {
                                 onCheckedChange={(checked) => setFormData({ ...formData, is_visible: checked })}
                             />
                             <Label>Visible on website</Label>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <Switch
+                                checked={formData.is_special}
+                                onCheckedChange={(checked) => setFormData({ ...formData, is_special: checked })}
+                            />
+                            <Label className="text-primary font-medium">Mark as Special</Label>
                         </div>
 
                         <Button type="submit" className="w-full">

@@ -128,12 +128,7 @@
         @apply bg-background text-foreground font-body antialiased;
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
+    h1, h2, h3, h4, h5, h6 {
         @apply font-display;
     }
 }
@@ -185,4 +180,14 @@
     .text-body {
         @apply font-body text-base md:text-lg leading-relaxed;
     }
+}
+
+@keyframes special-glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(107, 83, 64, 0.15); }
+    50% { box-shadow: 0 0 18px rgba(107, 83, 64, 0.25); }
+}
+
+@keyframes badge-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }

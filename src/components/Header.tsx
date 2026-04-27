@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
@@ -124,6 +124,16 @@ const Header = () => {
                                     </li>
                                 ))}
                             </ul>
+
+                            <div className="mt-6">
+                                <a
+                                    href="#menu"
+                                    className="flex items-center gap-2 px-4 py-3 border border-primary rounded-lg text-primary font-body text-sm font-semibold uppercase tracking-wider hover:bg-primary hover:text-white transition-all"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    <Star className="w-4 h-4" /> View Special Menu
+                                </a>
+                            </div>
 
                             <div className="mt-auto pt-8 border-t border-border">
                                 <Button variant="hero" size="lg" className="w-full" asChild>
