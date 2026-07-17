@@ -191,3 +191,50 @@
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
 }
+
+/* Metallic voucher button — brushed-gold base with a light streak gliding across */
+.btn-voucher-metallic {
+    position: relative;
+    overflow: hidden;
+    background-image: linear-gradient(
+        135deg,
+        hsl(42 52% 46%) 0%,
+        hsl(42 68% 66%) 22%,
+        hsl(42 55% 52%) 42%,
+        hsl(42 72% 70%) 60%,
+        hsl(42 52% 48%) 80%,
+        hsl(42 64% 60%) 100%
+    );
+}
+
+.btn-voucher-metallic::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        115deg,
+        transparent 0%,
+        transparent 38%,
+        hsl(45 100% 98% / 0.15) 46%,
+        hsl(45 100% 100% / 0.65) 50%,
+        hsl(45 100% 98% / 0.15) 54%,
+        transparent 62%,
+        transparent 100%
+    );
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: voucher-sheen 6s ease-in-out infinite;
+}
+
+@keyframes voucher-sheen {
+    0% { background-position: 150% 0; }
+    35%, 100% { background-position: -150% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-voucher-metallic::before {
+        animation: none;
+    }
+}

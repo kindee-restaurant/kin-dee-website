@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, Star } from "lucide-react";
+import { Menu, X, Star, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
@@ -63,8 +63,10 @@ const Header = () => {
                 </ul>
 
                 <div className="hidden md:block">
-                    <Button variant="hero" size="lg" asChild>
-                        <a href="#reservations">Book a Table</a>
+                    <Button variant="voucher" size="lg" asChild>
+                        <a href="https://kindee.giftsmart.ie/" target="_blank" rel="noopener noreferrer">
+                            <Gift className="w-4 h-4" /> Buy a Voucher
+                        </a>
                     </Button>
                 </div>
 

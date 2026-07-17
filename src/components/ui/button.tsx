@@ -18,6 +18,7 @@ const buttonVariants = cva(
                 hero: "bg-primary text-primary-foreground hover:bg-foreground shadow-elevated hover:shadow-glow transform hover:-translate-y-0.5",
                 "hero-outline": "border-2 border-foreground bg-foreground/90 text-primary-foreground hover:bg-foreground hover:text-primary-foreground backdrop-blur-sm",
                 gold: "bg-accent text-foreground font-semibold shadow-elevated hover:bg-gold transform hover:-translate-y-0.5 border border-gold",
+                voucher: "btn-voucher-metallic text-charcoal font-semibold border border-gold/60 shadow-elevated transition-all duration-500 hover:shadow-glow hover:-translate-y-0.5",
                 elegant: "bg-cream text-charcoal border border-border hover:bg-secondary hover:border-primary",
             },
             size: {
