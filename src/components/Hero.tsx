@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroFood from "@/assets/hero-image.png";
 
@@ -73,6 +74,11 @@ const Hero = ({ data }: HeroProps) => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.8s" }}>
                         <Button variant="hero" size="xl" asChild>
                             <a href="#reservations">{heroData.button_text}</a>
+                        </Button>
+                        <Button variant="voucher" size="xl" className="md:hidden" asChild>
+                            <a href="https://kindee.giftsmart.ie/" target="_blank" rel="noopener noreferrer">
+                                <Gift className="w-5 h-5" /> Buy a Voucher
+                            </a>
                         </Button>
                         <Button variant="hero-outline" size="xl" asChild>
                             <a href="#menu">View Our Menu</a>
