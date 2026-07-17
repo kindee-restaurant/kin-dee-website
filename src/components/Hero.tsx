@@ -54,7 +54,7 @@ const Hero = ({ data }: HeroProps) => {
 
             {/* Content with fade on scroll */}
             <div
-                className="relative z-10 container-custom text-center pt-20"
+                className="relative z-10 container-custom text-center pt-20 pb-44 md:pb-0"
                 style={{ opacity: opacityFade, transform: `translateY(${scrollY * 0.2}px)` }}
             >
                 <div className="max-w-4xl mx-auto">
