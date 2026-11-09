@@ -7,6 +7,8 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 
 interface AboutProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     settings?: {
         about_title?: string;
         about_text?: string;
@@ -17,7 +19,7 @@ interface AboutProps {
     } | null;
 }
 
-const About = ({ settings }: AboutProps) => {
+const About = ({ settings, headingAs: HeadingTag = "h2" }: AboutProps) => {
     const { ref: sectionRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
     const { ref: imageRef, isVisible: imageVisible } = useScrollAnimation({ threshold: 0.3 });
     const { ref: statsRef, isVisible: statsVisible } = useScrollAnimation({ threshold: 0.5 });
@@ -64,9 +66,9 @@ const About = ({ settings }: AboutProps) => {
                         <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">
                             Our Story
                         </p>
-                        <h2 className="heading-section text-foreground mb-6">
+                        <HeadingTag className="heading-section text-foreground mb-6">
                             {settings?.about_title || <>A Culinary Journey <em> Southeast Asia to Dublin</em></>}
-                        </h2>
+                        </HeadingTag>
                         <div className="space-y-4 text-body text-muted-foreground whitespace-pre-line">
                             {settings?.about_text || (
                                 <>

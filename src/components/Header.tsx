@@ -13,10 +13,16 @@ interface HeaderProps {
     festive?: string | null;
     /** Label of the live special menu (e.g. "Christmas"); adds a nav link to it. */
     specialMenuLabel?: string | null;
+    /** "home" links to sections on the homepage; "page" (dedicated pages) links to the other pages and keeps the bar solid. */
+    variant?: "home" | "page";
 }
 
-const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
-    const [isScrolled, setIsScrolled] = useState(false);
+const Header = ({ festive = null, specialMenuLabel = null, variant = "home" }: HeaderProps) => {
+    const [scrolled, setIsScrolled] = useState(false);
+    const onHome = variant === "home";
+    const isScrolled = !onHome || scrolled;
+    /** Homepage section anchor, or the dedicated page when we're not on the homepage. */
+    const to = (anchor: string, page: string) => (onHome ? anchor : page);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -30,13 +36,13 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
     }, []);
 
     const navLinks = [
-        ...(specialMenuLabel ? [{ href: "#special-menu", label: specialMenuLabel }] : []),
-        { href: "#about", label: "About" },
-        { href: "#menu", label: "Menu" },
-        { href: "#wines", label: "Wines" },
-        { href: "#gallery", label: "Gallery" },
-        { href: "#reservations", label: "Reservations" },
-        { href: "#contact", label: "Contact" },
+        ...(specialMenuLabel ? [{ href: to("#special-menu", "/menu#special-menu"), label: specialMenuLabel }] : []),
+        { href: to("#about", "/about"), label: "About" },
+        { href: to("#menu", "/menu"), label: "Menu" },
+        { href: to("#wines", "/wine-list"), label: "Wines" },
+        { href: to("#gallery", "/gallery"), label: "Gallery" },
+        { href: to("#reservations", "/contact#reservations"), label: "Reservations" },
+        { href: to("#contact", "/contact"), label: "Contact" },
     ];
 
     return (
@@ -48,7 +54,7 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
         >
             <nav className="container-custom flex items-center justify-between">
                 <a
-                    href="#"
+                    href="/"
                     className={`font-display font-bold text-2xl uppercase tracking-widest transition-colors duration-300 ${isScrolled ? "text-foreground" : "text-primary-foreground"
                         }`}
                 >
@@ -85,7 +91,7 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
                     className={`md:hidden p-2 transition-colors ${isScrolled ? "text-foreground" : "text-primary-foreground"
                         }`}
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    aria-label="Toggle menu"
+                    aria-label="Open navigation menu"
                 >
                     {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -115,7 +121,7 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
                         <div className="flex flex-col h-full p-6">
                             <div className="flex justify-between items-center mb-8">
                                 <a
-                                    href="#"
+                                    href="/"
                                     className="font-display font-bold text-2xl uppercase tracking-widest text-foreground"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
@@ -124,6 +130,7 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className="p-2 text-foreground hover:text-primary transition-colors"
+                                    aria-label="Close navigation menu"
                                 >
                                     <X size={24} />
                                 </button>
@@ -145,7 +152,7 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
 
                             <div className="mt-6">
                                 <a
-                                    href={specialMenuLabel ? "#special-menu" : "#menu"}
+                                    href={specialMenuLabel ? to("#special-menu", "/menu#special-menu") : to("#menu", "/menu")}
                                     className="flex items-center gap-2 px-4 py-3 border border-primary rounded-lg text-primary font-body text-sm font-semibold uppercase tracking-wider hover:bg-primary hover:text-white transition-all"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
@@ -155,7 +162,7 @@ const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
 
                             <div className="mt-auto pt-8 border-t border-border">
                                 <Button variant="hero" size="lg" className="w-full" asChild>
-                                    <a href="#reservations" onClick={() => setIsMobileMenuOpen(false)}>Book a Table</a>
+                                    <a href={to("#reservations", "/contact#reservations")} onClick={() => setIsMobileMenuOpen(false)}>Book a Table</a>
                                 </Button>
                             </div>
                         </div>

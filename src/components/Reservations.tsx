@@ -6,6 +6,8 @@ import { Phone, Clock, MapPin } from "lucide-react";
 type BusinessHour = { id: string; day_range: string; hours: string };
 
 interface ReservationsProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     settings?: {
         contact_phone?: string;
         contact_address?: string;
@@ -13,7 +15,7 @@ interface ReservationsProps {
     hours?: BusinessHour[];
 }
 
-const Reservations = ({ settings, hours = [] }: ReservationsProps) => {
+const Reservations = ({ settings, hours = [], headingAs: HeadingTag = "h2" }: ReservationsProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const scriptLoaded = useRef(false);
 
@@ -21,32 +23,44 @@ const Reservations = ({ settings, hours = [] }: ReservationsProps) => {
     const contactAddress = settings?.contact_address || "133 Leeson Street Upper, Dublin 4, D04HX48";
 
     useEffect(() => {
-        if (scriptLoaded.current) return;
+        const el = containerRef.current;
+        if (!el || scriptLoaded.current) return;
 
-        // Clear container first
-        if (containerRef.current) {
+        // The OpenTable widget is heavy; only load it when the booking section is about to scroll into view.
+        const load = () => {
+            if (scriptLoaded.current || !containerRef.current) return;
             containerRef.current.innerHTML = "";
-        }
-
-        // Load OpenTable widget script
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = "//www.opentable.ie/widget/reservation/loader?rid=466095&type=wide&theme=standard&color=8&dark=false&iframe=true&domain=ie&lang=en-IE&newtab=false&ot_source=Restaurant%20website&font=arialBlack&ot_logo=standard&primary_color=f2ede3&primary_font_color=333333&button_color=2a2622&button_font_color=ffffff&cfe=true";
-
-        if (containerRef.current) {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.async = true;
+            script.src = "https://www.opentable.ie/widget/reservation/loader?rid=466095&type=wide&theme=standard&color=8&dark=false&iframe=true&domain=ie&lang=en-IE&newtab=false&ot_source=Restaurant%20website&font=arialBlack&ot_logo=standard&primary_color=f2ede3&primary_font_color=333333&button_color=2a2622&button_font_color=ffffff&cfe=true";
             containerRef.current.appendChild(script);
             scriptLoaded.current = true;
-        }
+        };
 
-        // No cleanup needed for script injection as it persists, but we clear innerHTML on mount if needed
+        if (!("IntersectionObserver" in window)) {
+            load();
+            return;
+        }
+        const io = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((e) => e.isIntersecting)) {
+                    load();
+                    io.disconnect();
+                }
+            },
+            { rootMargin: "800px 0px" }
+        );
+        io.observe(el);
+        return () => io.disconnect();
     }, []);
 
-    const formattedHours = [
+    const formattedHours = hours.length ? hours : [
         { id: "1", day_range: "Monday", hours: "12pm - 9pm" },
-        { id: "2", day_range: "Wed - Thu", hours: "12pm - 10pm" },
-        { id: "3", day_range: "Fri - Sat", hours: "12pm - 11pm" },
-        { id: "4", day_range: "Sun", hours: "1pm - 9pm" },
-        { id: "5", day_range: "Tuesday", hours: "Closed" },
+        { id: "2", day_range: "Tuesday", hours: "Closed" },
+        { id: "3", day_range: "Wed - Thu", hours: "12pm - 10pm" },
+        { id: "4", day_range: "Fri - Sat", hours: "12pm - 11pm" },
+        { id: "5", day_range: "Sunday", hours: "1pm - 9pm" },
     ];
 
     return (
@@ -58,9 +72,9 @@ const Reservations = ({ settings, hours = [] }: ReservationsProps) => {
                     {/* Intro Section - Mobile: 1st, Desktop: 1st Col Top */}
                     <div className="order-1 lg:order-none animate-fade-in text-center lg:text-left lg:col-start-1 lg:row-start-1">
                         <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">Reservations</p>
-                        <h2 className="heading-section text-foreground mb-6">
+                        <HeadingTag className="heading-section text-foreground mb-6">
                             Book Your <em>Table</em>
-                        </h2>
+                        </HeadingTag>
                         <p className="text-muted-foreground text-lg mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
                             Immerse yourself in the authentic flavors of Thailand. Whether it's an intimate dinner or a celebration with friends, we look forward to welcoming you.
                         </p>

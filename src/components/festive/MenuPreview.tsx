@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Expand, FileText, X, ZoomIn, ZoomOut } from "lucide-react";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { SpecialMenu } from "@/lib/specialMenus";
@@ -14,11 +15,12 @@ export const MenuPreviewCard = ({ menu, onOpen }: { menu: SpecialMenu; onOpen: (
         aria-label={`View the full ${menu.title}`}
     >
         <div className="relative aspect-[2/3] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
                 src={menu.image_url!}
-                alt={menu.title}
-                className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
+                alt={`${menu.title} at Kin Dee, Dublin`}
+                fill
+                sizes="(max-width: 640px) 190px, 250px"
+                className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
             />
             <span className="absolute bottom-2 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-[#f8f1e3]/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#1d4a33] shadow-sm">
                 <Expand className="w-3 h-3" /> View

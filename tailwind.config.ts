@@ -14,10 +14,10 @@ export default {
         },
         extend: {
             fontFamily: {
-                display: ['"Playfair Display"', 'serif'],
-                body: ['"DM Sans"', 'sans-serif'],
-                script: ['"Great Vibes"', 'cursive'],
-                festive: ['Cinzel', '"Playfair Display"', 'serif'],
+                display: ['var(--font-playfair)', '"Playfair Display"', 'serif'],
+                body: ['var(--font-dm-sans)', '"DM Sans"', 'sans-serif'],
+                script: ['var(--font-great-vibes)', '"Great Vibes"', 'cursive'],
+                festive: ['var(--font-cinzel)', 'Cinzel', 'var(--font-playfair)', 'serif'],
             },
             colors: {
                 border: "hsl(var(--border))",

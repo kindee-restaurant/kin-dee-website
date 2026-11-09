@@ -45,7 +45,6 @@ const FloatingCTAs = ({ contactPhone = "+353 1 963 6162", deliverooLink = "https
                     <a
                         href={`tel:${contactPhone.replace(/\s+/g, '')}`}
                         className="animate-cta-1 group flex items-center gap-2 sm:gap-2.5 bg-foreground text-background px-3 py-2 sm:px-5 sm:py-3.5 rounded-full shadow-[0_4px_14px_0_rgba(0,0,0,0.39)] border border-border/50 hover:shadow-[0_6px_20px_rgba(0,0,0,0.23)] hover:scale-105 transition-all duration-300"
-                        aria-label="Call to order take away"
                     >
                         <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-background/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                             <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-background" />
@@ -66,11 +65,10 @@ const FloatingCTAs = ({ contactPhone = "+353 1 963 6162", deliverooLink = "https
                         href={deliverooLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="animate-cta-2 group flex items-center gap-2 sm:gap-2.5 bg-[#00CCBC] text-white px-3 py-2 sm:px-5 sm:py-3.5 rounded-full shadow-[0_4px_14px_0_rgba(0,204,188,0.39)] border border-[#00CCBC]/50 hover:shadow-[0_6px_20px_rgba(0,204,188,0.39)] hover:scale-105 transition-all duration-300"
-                        aria-label="Order on Deliveroo"
+                        className="animate-cta-2 group flex items-center gap-2 sm:gap-2.5 bg-[#00CCBC] text-[#00302c] px-3 py-2 sm:px-5 sm:py-3.5 rounded-full shadow-[0_4px_14px_0_rgba(0,204,188,0.39)] border border-[#00CCBC]/50 hover:shadow-[0_6px_20px_rgba(0,204,188,0.39)] hover:scale-105 transition-all duration-300"
                     >
                         <div className="flex flex-col items-end text-right">
-                            <span className="font-display text-[10px] sm:text-xs uppercase tracking-wider text-white/90 leading-none mb-0.5">Delivery</span>
+                            <span className="font-display text-[10px] sm:text-xs uppercase tracking-wider text-[#00302c]/80 leading-none mb-0.5">Delivery</span>
                             <span className="font-body text-xs sm:text-sm font-medium leading-none">Order Online</span>
                         </div>
                         <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">

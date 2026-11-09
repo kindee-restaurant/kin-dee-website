@@ -24,10 +24,12 @@ const fallbackImages: GalleryImage[] = [
 ];
 
 interface GalleryProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     images?: GalleryImage[];
 }
 
-const Gallery = ({ images: propImages }: GalleryProps) => {
+const Gallery = ({ images: propImages, headingAs: HeadingTag = "h2" }: GalleryProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [mounted, setMounted] = useState(false);
     const [visibleCount, setVisibleCount] = useState(6);
@@ -74,9 +76,9 @@ const Gallery = ({ images: propImages }: GalleryProps) => {
                     <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">
                         Gallery
                     </p>
-                    <h2 className="heading-section text-foreground mb-4">
+                    <HeadingTag className="heading-section text-foreground mb-4">
                         A Feast for the <em>Eyes</em>
-                    </h2>
+                    </HeadingTag>
                     <p className="text-body text-muted-foreground max-w-2xl mx-auto">
                         Step inside Kin Dee and discover our elegant space and beautifully crafted dishes.
                     </p>
@@ -110,7 +112,7 @@ const Gallery = ({ images: propImages }: GalleryProps) => {
                             >
                                 <Image
                                     src={image.image_url}
-                                    alt={image.alt_text || "Gallery image"}
+                                    alt={image.alt_text ? `${image.alt_text} at Kin Dee, Dublin` : "Dish at Kin Dee, Dublin"}
                                     fill
                                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -171,7 +173,7 @@ const Gallery = ({ images: propImages }: GalleryProps) => {
                         >
                             <img
                                 src={typeof images[selectedIndex].image_url === 'string' ? images[selectedIndex].image_url : images[selectedIndex].image_url.src}
-                                alt={images[selectedIndex].alt_text || "Gallery image"}
+                                alt={images[selectedIndex].alt_text ? `${images[selectedIndex].alt_text} at Kin Dee, Dublin` : "Dish at Kin Dee, Dublin"}
                                 className="max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
                             />
                             <p className="text-white/80 mt-4 text-center font-body tracking-wide px-8 text-sm md:text-base">
