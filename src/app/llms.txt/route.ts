@@ -9,7 +9,7 @@ import {
     PAGES,
     SITE_URL,
     VOUCHER_URL,
-    absoluteUrl,
+    seoImage,
     buildFaqs,
     contactEmail,
     contactPhone,
@@ -65,7 +65,7 @@ export async function GET() {
     if (specials.length) {
         lines.push("## Seasonal menu (available now)");
         for (const m of specials) {
-            const link = m.pdf_url || (m.image_url ? absoluteUrl(m.image_url) : null);
+            const link = m.pdf_url || seoImage("special", m.title, m.id, m.image_url);
             lines.push(
                 `- [${m.title}](${link || `${SITE_URL}/menu`})${m.price_text ? ` — ${m.price_text}` : ""}${m.description ? `: ${oneLine(m.description)}` : ""}`
             );

@@ -2,7 +2,6 @@ import { cache } from "react";
 import { createClient as createCookieClient } from "@/lib/supabase/server";
 import { createClient as createPlainClient } from "@supabase/supabase-js";
 import type { SpecialMenu } from "@/lib/specialMenus";
-import { mediaUrl } from "@/lib/media";
 
 export interface PdfMenu {
     id: string;
@@ -95,7 +94,7 @@ export interface SiteData {
     wineItems: WineItem[];
 }
 
-async function load(useCookies: boolean, rawImageUrls = false): Promise<SiteData> {
+async function load(useCookies: boolean): Promise<SiteData> {
     const supabase = useCookies
         ? await createCookieClient()
         : createPlainClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
@@ -123,24 +122,7 @@ async function load(useCookies: boolean, rawImageUrls = false): Promise<SiteData
         wineCategories: wineCategories.data || [],
         wineItems: wineItems.data || [],
     };
-    return rawImageUrls ? data : withSeoImageUrls(data);
-}
-
-/** Swap Supabase storage URLs for readable kindee.ie/media/... URLs (see src/lib/media.ts). */
-function withSeoImageUrls(d: SiteData): SiteData {
-    return {
-        ...d,
-        hero: d.hero ? { ...d.hero, image_url: mediaUrl("hero", "south east asian food", "hero", d.hero.image_url) } : null,
-        settings: d.settings
-            ? { ...d.settings, about_image: mediaUrl("about", "restaurant dining room", "about", d.settings.about_image) }
-            : null,
-        menus: d.menus.map((m) => ({ ...m, image_url: mediaUrl("menu", m.title, m.id, m.image_url) })),
-        specialMenus: d.specialMenus.map((m) => ({ ...m, image_url: mediaUrl("special", m.title, m.id, m.image_url) ?? null })),
-        galleryImages: d.galleryImages.map((g) => ({
-            ...g,
-            image_url: mediaUrl("gallery", g.alt_text?.replace(/\s*\(\d+\)$/, ""), g.id, g.image_url) ?? g.image_url,
-        })),
-    };
+    return data;
 }
 
 /** All public site content, fetched once per request (pages). */
@@ -149,5 +131,3 @@ export const getSiteData = cache(() => load(true));
 /** Same content without cookies — for route handlers such as /llms.txt and the sitemap. */
 export const getSiteDataPublic = () => load(false);
 
-/** Original storage URLs — only for the /media image route. */
-export const getSiteDataRaw = () => load(false, true);

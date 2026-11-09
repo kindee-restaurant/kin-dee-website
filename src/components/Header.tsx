@@ -31,7 +31,10 @@ const Header = ({ festive = null, specialMenuLabel = null, variant = "home" }: H
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
         };
-        window.addEventListener("scroll", handleScroll);
+        // Read it once on mount as well: after a reload or "back", the browser restores the scroll position
+        // without firing a scroll event, which left the bar transparent (white text) over light content.
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 

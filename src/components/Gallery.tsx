@@ -177,7 +177,6 @@ const Gallery = ({ images: propImages, headingAs: HeadingTag = "h2" }: GalleryPr
                                 width={1600}
                                 height={1200}
                                 sizes="(max-width: 768px) 100vw, 1200px"
-                                quality={78}
                                 className="w-auto h-auto max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
                             />
                             <p className="text-white/80 mt-4 text-center font-body tracking-wide px-8 text-sm md:text-base">

@@ -1,4 +1,4 @@
-import { PAGES, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { PAGES, SITE_URL, absoluteUrl, seoImage } from "@/lib/seo";
 import { getSiteDataPublic } from "@/lib/siteData";
 
 // Hand-written sitemap so it can include Google image-sitemap entries (Next 14's sitemap.ts drops them).
@@ -13,10 +13,13 @@ export async function GET() {
 
     const priority: Record<string, string> = { "/": "1.0", "/menu": "0.9", "/contact": "0.9", "/wine-list": "0.7", "/gallery": "0.7" };
     const images: Record<string, (string | undefined | null)[]> = {
-        "/": [data.hero?.image_url, "/opengraph-image.jpg"],
-        "/menu": [...data.specialMenus.map((m) => m.image_url), ...data.menus.map((m) => m.image_url)],
-        "/about": [data.settings?.about_image],
-        "/gallery": data.galleryImages.map((g) => g.image_url),
+        "/": [seoImage("hero", "south east asian food", "hero", data.hero?.image_url), "/opengraph-image.jpg"],
+        "/menu": [
+            ...data.specialMenus.map((m) => seoImage("special", m.title, m.id, m.image_url)),
+            ...data.menus.map((m) => seoImage("menu", m.title, m.id, m.image_url)),
+        ],
+        "/about": [seoImage("about", "restaurant dining room", "about", data.settings?.about_image)],
+        "/gallery": data.galleryImages.map((g) => seoImage("gallery", g.alt_text, g.id, g.image_url)),
     };
 
     const urls = PAGES.map((p) => {
