@@ -9,6 +9,7 @@ import {
     LogOut,
     Home,
     Sparkles,
+    Gift,
 } from "lucide-react";
 import {
     SidebarInset,
@@ -34,6 +35,7 @@ const menuItems = [
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
     { title: "Hero", icon: Sparkles, href: "/admin/hero" },
     { title: "Menu", icon: UtensilsCrossed, href: "/admin/menu" },
+    { title: "Special Menus", icon: Gift, href: "/admin/special-menus" },
     { title: "Gallery", icon: ImageIcon, href: "/admin/gallery" },
     { title: "Settings", icon: Settings, href: "/admin/settings" },
 ];
@@ -107,7 +109,7 @@ export default function AdminLayout({
                 <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:px-6">
                     <SidebarTrigger />
                     <h1 className="font-display text-lg font-medium capitalize">
-                        {pathname?.split("/").pop() || "Dashboard"}
+                        {pathname?.split("/").pop()?.replace(/-/g, " ") || "Dashboard"}
                     </h1>
                 </header>
                 <main className="flex-1 p-4 lg:p-6">{children}</main>

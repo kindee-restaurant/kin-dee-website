@@ -17,6 +17,7 @@ export default {
                 display: ['"Playfair Display"', 'serif'],
                 body: ['"DM Sans"', 'sans-serif'],
                 script: ['"Great Vibes"', 'cursive'],
+                festive: ['Cinzel', '"Playfair Display"', 'serif'],
             },
             colors: {
                 border: "hsl(var(--border))",

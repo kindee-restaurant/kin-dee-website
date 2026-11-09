@@ -13,9 +13,11 @@ interface HeroProps {
         image_url?: string;
         button_text?: string;
     } | null;
+    /** Short festive announcement shown above the title, linking to the special menu. */
+    festiveBadge?: string;
 }
 
-const Hero = ({ data }: HeroProps) => {
+const Hero = ({ data, festiveBadge }: HeroProps) => {
     const [scrollY, setScrollY] = useState(0);
 
     const heroData = {
@@ -54,10 +56,18 @@ const Hero = ({ data }: HeroProps) => {
 
             {/* Content with fade on scroll */}
             <div
-                className="relative z-10 container-custom text-center pt-20 pb-44 md:pb-0"
+                className={`relative z-10 container-custom text-center pb-44 md:pb-0 ${festiveBadge ? "pt-32 md:pt-24" : "pt-20"}`}
                 style={{ opacity: opacityFade, transform: `translateY(${scrollY * 0.2}px)` }}
             >
                 <div className="max-w-4xl mx-auto">
+                    {festiveBadge && (
+                        <a
+                            href="#special-menu"
+                            className="inline-flex items-center gap-2 mb-5 sm:mb-6 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#d4a83a]/70 bg-[#123524]/90 backdrop-blur-sm text-[#f6e7bf] font-festive text-[10px] sm:text-xs font-semibold tracking-[0.14em] sm:tracking-[0.18em] uppercase shadow-md hover:bg-[#123524] hover:border-[#d4a83a] transition-colors animate-fade-in"
+                        >
+                            <span aria-hidden="true" className="text-[#c9a14a]">✦</span> {festiveBadge} <span aria-hidden="true" className="text-[#c9a14a]">✦</span>
+                        </a>
+                    )}
                     <p className="font-body text-sm md:text-base uppercase tracking-[0.3em] text-sage-light mb-6 animate-fade-in" style={{ animationDelay: "0.2s" }}>
                         {heroData.subtitle}
                     </p>

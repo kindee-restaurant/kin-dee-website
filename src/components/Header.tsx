@@ -5,8 +5,17 @@ import { createPortal } from "react-dom";
 import { Menu, X, Star, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
+import ChristmasLights from "@/components/festive/ChristmasLights";
+import BackToTop from "@/components/BackToTop";
 
-const Header = () => {
+interface HeaderProps {
+    /** Active festive theme, if any (e.g. "christmas"). */
+    festive?: string | null;
+    /** Label of the live special menu (e.g. "Christmas"); adds a nav link to it. */
+    specialMenuLabel?: string | null;
+}
+
+const Header = ({ festive = null, specialMenuLabel = null }: HeaderProps) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -21,6 +30,7 @@ const Header = () => {
     }, []);
 
     const navLinks = [
+        ...(specialMenuLabel ? [{ href: "#special-menu", label: specialMenuLabel }] : []),
         { href: "#about", label: "About" },
         { href: "#menu", label: "Menu" },
         { href: "#wines", label: "Wines" },
@@ -81,6 +91,12 @@ const Header = () => {
                 </button>
             </nav>
 
+            {festive === "christmas" && (
+                <ChristmasLights className="absolute left-0 right-0 top-full -mt-1" />
+            )}
+
+            <BackToTop className={festive === "christmas" ? "mt-5 md:mt-6" : undefined} />
+
             {/* Mobile Menu Portal */}
             {mounted && createPortal(
                 <>
@@ -129,11 +145,11 @@ const Header = () => {
 
                             <div className="mt-6">
                                 <a
-                                    href="#menu"
+                                    href={specialMenuLabel ? "#special-menu" : "#menu"}
                                     className="flex items-center gap-2 px-4 py-3 border border-primary rounded-lg text-primary font-body text-sm font-semibold uppercase tracking-wider hover:bg-primary hover:text-white transition-all"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    <Star className="w-4 h-4" /> View Special Menu
+                                    <Star className="w-4 h-4" /> {specialMenuLabel ? `View ${specialMenuLabel} Menu` : "View Special Menu"}
                                 </a>
                             </div>
 
