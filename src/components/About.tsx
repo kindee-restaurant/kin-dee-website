@@ -47,8 +47,8 @@ const About = ({ settings, headingAs: HeadingTag = "h2" }: AboutProps) => {
                                 src={aboutImage}
                                 alt="Elegant interior of Kin Dee Thai restaurant Dublin"
                                 fill
+                                sizes="(max-width: 1024px) 100vw, 600px"
                                 className="object-cover hover:scale-105 transition-transform duration-700"
-                                priority
                             />
                         </div>
                         {/* Decorative element */}

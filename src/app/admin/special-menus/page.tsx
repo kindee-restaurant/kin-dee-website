@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { AuthGuard } from "@/components/admin/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,7 +80,7 @@ export default function SpecialMenusPage() {
     }, []);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, kind: "image" | "pdf") => {
-        const file = e.target.files?.[0];
+        const file = await compressImage(e.target.files?.[0]);
         e.target.value = "";
         if (!file) return;
 

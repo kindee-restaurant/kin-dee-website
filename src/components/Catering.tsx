@@ -115,8 +115,9 @@ const Catering = ({ settings, headingAs: HeadingTag = "h2" }: CateringProps) => 
                     >
                         <Image
                             src={cateringImage}
-                            alt="Kin Dee Catering Spread"
+                            alt="Thai and South East Asian catering spread by Kin Dee, Dublin"
                             fill
+                            sizes="(max-width: 1024px) 100vw, 600px"
                             className="object-cover transition-all duration-700 hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

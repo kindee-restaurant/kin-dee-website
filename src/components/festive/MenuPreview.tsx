@@ -169,10 +169,14 @@ export const MenuLightbox = ({
                     className={`relative flex-1 min-h-0 overflow-auto overscroll-contain select-none ${zoom > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-zoom-in"}`}
                     style={{ touchAction: "pan-x pan-y" }}
                 >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    {/* Optimised (AVIF/WebP) but large enough to stay sharp when zoomed in. */}
+                    <Image
                         src={menu.image_url!}
-                        alt={menu.title}
+                        alt={`${menu.title} at Kin Dee, Dublin`}
+                        width={1024}
+                        height={1536}
+                        sizes="(max-width: 768px) 200vw, 1080px"
+                        quality={75}
                         draggable={false}
                         className="block max-w-none h-auto mx-auto mb-14"
                         style={{ width: `${zoom * 100}%` }}

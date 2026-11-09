@@ -3,10 +3,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import heroFood from "@/assets/feast-for-the-eyes-4.jpg";
+import heroFood from "@/assets/feast-for-the-eyes-4.webp";
 import restaurantInterior from "@/assets/feast-for-the-eyes-1.webp";
 import dishCurry from "@/assets/feast-for-the-eyes-2.webp";
-import dishRolls from "@/assets/feast-for-the-eyes-3.jpg";
+import dishRolls from "@/assets/feast-for-the-eyes-3.webp";
 import dishSoup from "@/assets/feast-for-the-eyes-5.jpg";
 import dishDessert from "@/assets/feast-for-the-eyes-6.webp";
 import { cn } from "@/lib/utils";
@@ -171,10 +171,14 @@ const Gallery = ({ images: propImages, headingAs: HeadingTag = "h2" }: GalleryPr
                             className="relative max-w-[100vw] max-h-[100vh] flex flex-col items-center p-2"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <img
-                                src={typeof images[selectedIndex].image_url === 'string' ? images[selectedIndex].image_url : images[selectedIndex].image_url.src}
+                            <Image
+                                src={images[selectedIndex].image_url}
                                 alt={images[selectedIndex].alt_text ? `${images[selectedIndex].alt_text} at Kin Dee, Dublin` : "Dish at Kin Dee, Dublin"}
-                                className="max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
+                                width={1600}
+                                height={1200}
+                                sizes="(max-width: 768px) 100vw, 1200px"
+                                quality={78}
+                                className="w-auto h-auto max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
                             />
                             <p className="text-white/80 mt-4 text-center font-body tracking-wide px-8 text-sm md:text-base">
                                 {images[selectedIndex].alt_text}

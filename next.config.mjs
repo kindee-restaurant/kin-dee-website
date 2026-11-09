@@ -5,6 +5,10 @@ const nextConfig = {
 
     // Image optimization configuration
     images: {
+        // Serve AVIF where supported (typically 20–50% smaller than WebP), WebP otherwise.
+        formats: ["image/avif", "image/webp"],
+        // Keep optimised images cached for 31 days instead of re-encoding them every minute.
+        minimumCacheTTL: 2678400,
         remotePatterns: [
             {
                 protocol: "https",
