@@ -78,6 +78,7 @@ const FloatingCTAs = ({ contactPhone = "+353 1 963 6162", deliverooLink = "https
                                 alt="Deliveroo Logo" 
                                 width={36} 
                                 height={36} 
+                                unoptimized
                                 className="object-cover w-full h-full" 
                             />
                         </div>

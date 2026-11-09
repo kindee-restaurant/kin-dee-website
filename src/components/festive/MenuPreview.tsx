@@ -176,7 +176,6 @@ export const MenuLightbox = ({
                         width={1024}
                         height={1536}
                         sizes="(max-width: 768px) 200vw, 1080px"
-                        quality={75}
                         draggable={false}
                         className="block max-w-none h-auto mx-auto mb-14"
                         style={{ width: `${zoom * 100}%` }}

@@ -5,8 +5,11 @@ const nextConfig = {
 
     // Image optimization configuration
     images: {
-        // Serve AVIF where supported (typically 20–50% smaller than WebP), WebP otherwise.
-        formats: ["image/avif", "image/webp"],
+        // WebP only, and a short list of sizes: every format × size × quality combination counts against
+        // Vercel's monthly image-optimisation allowance, and AVIF + the default 16 sizes used it all up.
+        formats: ["image/webp"],
+        deviceSizes: [640, 828, 1200, 1920],
+        imageSizes: [96, 256, 384, 512],
         // Keep optimised images cached for 31 days instead of re-encoding them every minute.
         minimumCacheTTL: 2678400,
         remotePatterns: [
