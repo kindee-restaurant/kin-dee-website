@@ -14,11 +14,6 @@ const nextConfig = {
         ],
     },
 
-    // Browsers and some crawlers ask for /favicon.ico directly; serve the generated icon.
-    async rewrites() {
-        return [{ source: "/favicon.ico", destination: "/icon/48" }];
-    },
-
     // Keep the admin area out of search results.
     async headers() {
         return [{ source: "/admin/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];

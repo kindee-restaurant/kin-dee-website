@@ -13,7 +13,7 @@ export async function GET() {
 
     const priority: Record<string, string> = { "/": "1.0", "/menu": "0.9", "/contact": "0.9", "/wine-list": "0.7", "/gallery": "0.7" };
     const images: Record<string, (string | undefined | null)[]> = {
-        "/": [data.hero?.image_url, "/opengraph-image"],
+        "/": [data.hero?.image_url, "/opengraph-image.jpg"],
         "/menu": [...data.specialMenus.map((m) => m.image_url), ...data.menus.map((m) => m.image_url)],
         "/about": [data.settings?.about_image],
         "/gallery": data.galleryImages.map((g) => g.image_url),

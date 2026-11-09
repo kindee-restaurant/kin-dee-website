@@ -41,7 +41,7 @@ export const DEFAULT_DESCRIPTION =
 export const META_DESCRIPTION =
     "South East Asian restaurant on Leeson Street Upper, Dublin 4. Thai classics and Asian fusion with Irish produce, cocktails and wine. Book online.";
 
-const SHARE_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "Kin Dee – South East Asian restaurant, Leeson Street, Dublin 4" };
+const SHARE_IMAGE = { url: "/opengraph-image.jpg", width: 1200, height: 630, alt: "Kin Dee – South East Asian restaurant, Leeson Street, Dublin 4" };
 
 /** Public pages, used for navigation, the sitemap and llms.txt. */
 export const PAGES = [
@@ -153,7 +153,7 @@ export const RESTAURANT_ID = `${SITE_URL}/#restaurant`;
 export function restaurantJsonLd(data: SiteData) {
     const { settings, hero, hours, menus, specialMenus } = data;
     const socials = socialLinks(settings);
-    const images = [hero?.image_url, settings?.about_image, "/opengraph-image"].filter((u): u is string => !!u).map(absoluteUrl);
+    const images = [hero?.image_url, settings?.about_image, "/opengraph-image.jpg"].filter((u): u is string => !!u).map(absoluteUrl);
 
     const menuEntries = [
         ...specialMenus
@@ -186,7 +186,7 @@ export function restaurantJsonLd(data: SiteData) {
         description: DEFAULT_DESCRIPTION,
         slogan: "Kin Dee means “eat well” in Thai",
         url: SITE_URL,
-        logo: `${SITE_URL}/icon`,
+        logo: `${SITE_URL}/icon3.png`,
         image: images,
         telephone: contactPhone(settings),
         email: contactEmail(settings),
