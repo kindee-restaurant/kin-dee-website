@@ -3,10 +3,10 @@
 import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import heroFood from "@/assets/feast-for-the-eyes-4.jpg";
+import heroFood from "@/assets/feast-for-the-eyes-4.webp";
 import restaurantInterior from "@/assets/feast-for-the-eyes-1.webp";
 import dishCurry from "@/assets/feast-for-the-eyes-2.webp";
-import dishRolls from "@/assets/feast-for-the-eyes-3.jpg";
+import dishRolls from "@/assets/feast-for-the-eyes-3.webp";
 import dishSoup from "@/assets/feast-for-the-eyes-5.jpg";
 import dishDessert from "@/assets/feast-for-the-eyes-6.webp";
 import { cn } from "@/lib/utils";
@@ -24,10 +24,12 @@ const fallbackImages: GalleryImage[] = [
 ];
 
 interface GalleryProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     images?: GalleryImage[];
 }
 
-const Gallery = ({ images: propImages }: GalleryProps) => {
+const Gallery = ({ images: propImages, headingAs: HeadingTag = "h2" }: GalleryProps) => {
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
     const [mounted, setMounted] = useState(false);
     const [visibleCount, setVisibleCount] = useState(6);
@@ -74,9 +76,9 @@ const Gallery = ({ images: propImages }: GalleryProps) => {
                     <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">
                         Gallery
                     </p>
-                    <h2 className="heading-section text-foreground mb-4">
+                    <HeadingTag className="heading-section text-foreground mb-4">
                         A Feast for the <em>Eyes</em>
-                    </h2>
+                    </HeadingTag>
                     <p className="text-body text-muted-foreground max-w-2xl mx-auto">
                         Step inside Kin Dee and discover our elegant space and beautifully crafted dishes.
                     </p>
@@ -110,7 +112,7 @@ const Gallery = ({ images: propImages }: GalleryProps) => {
                             >
                                 <Image
                                     src={image.image_url}
-                                    alt={image.alt_text || "Gallery image"}
+                                    alt={image.alt_text ? `${image.alt_text} at Kin Dee, Dublin` : "Dish at Kin Dee, Dublin"}
                                     fill
                                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -169,10 +171,14 @@ const Gallery = ({ images: propImages }: GalleryProps) => {
                             className="relative max-w-[100vw] max-h-[100vh] flex flex-col items-center p-2"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <img
-                                src={typeof images[selectedIndex].image_url === 'string' ? images[selectedIndex].image_url : images[selectedIndex].image_url.src}
-                                alt={images[selectedIndex].alt_text || "Gallery image"}
-                                className="max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
+                            <Image
+                                src={images[selectedIndex].image_url}
+                                alt={images[selectedIndex].alt_text ? `${images[selectedIndex].alt_text} at Kin Dee, Dublin` : "Dish at Kin Dee, Dublin"}
+                                width={1600}
+                                height={1200}
+                                sizes="(max-width: 768px) 100vw, 1200px"
+                                quality={78}
+                                className="w-auto h-auto max-w-full max-h-[80vh] md:max-h-[85vh] object-contain rounded-sm shadow-2xl"
                             />
                             <p className="text-white/80 mt-4 text-center font-body tracking-wide px-8 text-sm md:text-base">
                                 {images[selectedIndex].alt_text}

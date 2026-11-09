@@ -3,6 +3,7 @@
 import { revalidateHome } from "@/app/actions";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { AuthGuard } from "@/components/admin/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,7 +70,7 @@ export default function HeroManagementPage() {
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
-        const file = e.target.files[0];
+        const file = await compressImage(e.target.files[0]);
         const fileExt = file.name.split('.').pop();
         const fileName = `hero-${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;

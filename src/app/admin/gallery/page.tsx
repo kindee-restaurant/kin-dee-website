@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { AuthGuard } from "@/components/admin/AuthGuard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +41,7 @@ export default function GalleryManagementPage() {
     }, []);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+        const file = await compressImage(e.target.files?.[0]);
         if (!file) return;
 
         setUploading(true);

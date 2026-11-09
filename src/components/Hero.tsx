@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroFood from "@/assets/hero-image.png";
+import heroFood from "@/assets/hero-image.webp";
 
 interface HeroProps {
     data?: {

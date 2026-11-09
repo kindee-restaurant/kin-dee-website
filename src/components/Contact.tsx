@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 type BusinessHour = { id: string; day_range: string; hours: string };
 
 interface ContactProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     settings?: {
         contact_address?: string;
         contact_phone?: string;
@@ -15,7 +17,9 @@ interface ContactProps {
     hours?: BusinessHour[];
 }
 
-const Contact = ({ settings, hours = [] }: ContactProps) => {
+const Contact = ({ settings, hours = [], headingAs: HeadingTag = "h2" }: ContactProps) => {
+    // Keep heading levels sequential: h1 → h2 on the Contact page, h2 → h3 on the homepage.
+    const SubHeading = HeadingTag === "h1" ? "h2" : "h3";
     const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation({ threshold: 0.3 });
     const { ref: mapRef, isVisible: mapVisible } = useScrollAnimation({ threshold: 0.2 });
     const { ref: infoRef, isVisible: infoVisible } = useScrollAnimation({ threshold: 0.2 });
@@ -34,9 +38,9 @@ const Contact = ({ settings, hours = [] }: ContactProps) => {
                     <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">
                         Find Us
                     </p>
-                    <h2 className="heading-section text-foreground mb-4">
+                    <HeadingTag className="heading-section text-foreground mb-4">
                         Visit <em>Kin Dee</em>
-                    </h2>
+                    </HeadingTag>
                     <p className="text-body text-muted-foreground max-w-2xl mx-auto">
                         Located in the heart of Dublin on prestigious Leeson Street Upper,
                         we're easily accessible from the city centre.
@@ -77,7 +81,7 @@ const Contact = ({ settings, hours = [] }: ContactProps) => {
                                 <MapPin className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <h3 className="font-display text-xl text-foreground mb-2">Address</h3>
+                                <SubHeading className="font-display text-xl text-foreground mb-2">Address</SubHeading>
                                 <p className="text-muted-foreground whitespace-pre-line">
                                     {settings?.contact_address || "133 Leeson Street Upper, Dublin 4, D04HX48"}
                                 </p>
@@ -89,7 +93,7 @@ const Contact = ({ settings, hours = [] }: ContactProps) => {
                                 <Phone className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <h3 className="font-display text-xl text-foreground mb-2">Phone</h3>
+                                <SubHeading className="font-display text-xl text-foreground mb-2">Phone</SubHeading>
                                 <a href={`tel:${settings?.contact_phone || "+35317654321"}`} className="text-muted-foreground hover:text-primary transition-colors">
                                     {settings?.contact_phone || "+353 1 765 4321"}
                                 </a>
@@ -101,7 +105,7 @@ const Contact = ({ settings, hours = [] }: ContactProps) => {
                                 <Mail className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <h3 className="font-display text-xl text-foreground mb-2">Email</h3>
+                                <SubHeading className="font-display text-xl text-foreground mb-2">Email</SubHeading>
                                 <a href={`mailto:${settings?.contact_email || "hello@kindee.ie"}`} className="text-muted-foreground hover:text-primary transition-colors">
                                     {settings?.contact_email || "hello@kindee.ie"}
                                 </a>
@@ -113,7 +117,7 @@ const Contact = ({ settings, hours = [] }: ContactProps) => {
                                 <Clock className="w-6 h-6 text-primary" />
                             </div>
                             <div>
-                                <h3 className="font-display text-xl text-foreground mb-2">Opening Hours</h3>
+                                <SubHeading className="font-display text-xl text-foreground mb-2">Opening Hours</SubHeading>
                                 <div className="text-muted-foreground space-y-1">
                                     {hours.length > 0 ? hours.map((h) => (
                                         <p key={h.id}>{h.day_range}: {h.hours}</p>

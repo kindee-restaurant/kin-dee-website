@@ -7,13 +7,15 @@ import { cn } from "@/lib/utils";
 import cateringImage from "@/assets/menu-thai-classics.jpg"; // Reusing an existing high-quality image
 
 interface CateringProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     settings?: {
         contact_phone?: string;
         contact_email?: string;
     } | null;
 }
 
-const Catering = ({ settings }: CateringProps) => {
+const Catering = ({ settings, headingAs: HeadingTag = "h2" }: CateringProps) => {
     const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation({ threshold: 0.3 });
     const { ref: imageRef, isVisible: imageVisible } = useScrollAnimation({ threshold: 0.2 });
     const { ref: infoRef, isVisible: infoVisible } = useScrollAnimation({ threshold: 0.2 });
@@ -34,9 +36,9 @@ const Catering = ({ settings }: CateringProps) => {
                     <p className="font-body text-sm uppercase tracking-[0.2em] text-primary mb-4">
                         Events & Gatherings
                     </p>
-                    <h2 className="heading-section text-foreground mb-4">
+                    <HeadingTag className="heading-section text-foreground mb-4">
                         Kin Dee <em>Catering</em>
-                    </h2>
+                    </HeadingTag>
                     <p className="text-body text-muted-foreground max-w-2xl mx-auto">
                         Bring the authentic taste of Thailand to your next event. From corporate functions to intimate home gatherings, our customized catering services are designed to ensure your guests "Eat Well".
                     </p>
@@ -113,8 +115,9 @@ const Catering = ({ settings }: CateringProps) => {
                     >
                         <Image
                             src={cateringImage}
-                            alt="Kin Dee Catering Spread"
+                            alt="Thai and South East Asian catering spread by Kin Dee, Dublin"
                             fill
+                            sizes="(max-width: 1024px) 100vw, 600px"
                             className="object-cover transition-all duration-700 hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

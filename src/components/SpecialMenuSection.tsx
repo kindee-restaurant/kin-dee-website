@@ -6,6 +6,8 @@ import { MenuLightbox, MenuPreviewCard } from "@/components/festive/MenuPreview"
 import { getSpecialMenuTypeConfig, type SpecialMenu } from "@/lib/specialMenus";
 
 interface SpecialMenuSectionProps {
+    /** Render the section title as the page's h1 (on its dedicated page) instead of h2. */
+    headingAs?: "h1" | "h2";
     menus: SpecialMenu[];
 }
 
@@ -113,7 +115,7 @@ const MenuFeature = ({ menu }: { menu: SpecialMenu }) => {
     );
 };
 
-const SpecialMenuSection = ({ menus }: SpecialMenuSectionProps) => {
+const SpecialMenuSection = ({ menus, headingAs: HeadingTag = "h2" }: SpecialMenuSectionProps) => {
     const active = menus.filter((m) => m.is_active);
     if (active.length === 0) return null;
 
@@ -135,9 +137,9 @@ const SpecialMenuSection = ({ menus }: SpecialMenuSectionProps) => {
             <div className="relative mx-4 sm:mx-8 md:mx-auto max-w-4xl festive-frame rounded-sm px-4 py-7 sm:px-8 sm:py-10 md:px-12 bg-[#fbf6ea]/70">
                 <header className="text-center mb-6 sm:mb-9">
                     <p className="font-festive text-[10px] sm:text-sm tracking-[0.35em] festive-gold-text font-semibold">KIN DEE</p>
-                    <h2 className="font-festive font-semibold text-[1.75rem] leading-none sm:text-5xl md:text-[3.4rem] text-[#1d4a33] tracking-[0.04em] mt-2 sm:mt-3">
+                    <HeadingTag className="font-festive font-semibold text-[1.75rem] leading-none sm:text-5xl md:text-[3.4rem] text-[#1d4a33] tracking-[0.04em] mt-2 sm:mt-3">
                         {heading.toUpperCase()}
-                    </h2>
+                    </HeadingTag>
                     <div className="mt-4">
                         <GoldDivider>
                             <span className="font-festive text-xs sm:text-base tracking-[0.3em] text-[#5b4a2e]">MENU</span>
