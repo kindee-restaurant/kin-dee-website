@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { BusinessHours, SiteData, WineItem } from "@/lib/siteData";
 import { getSpecialMenuTypeConfig } from "@/lib/specialMenus";
+import { mediaUrl, type MediaKind } from "@/lib/media";
 
 /* ------------------------------------------------------------------ */
 /* Fixed facts about the restaurant (things that are not in the DB)    */
@@ -55,6 +56,16 @@ export const PAGES = [
 ] as const;
 
 export const absoluteUrl = (path: string) => (path.startsWith("http") ? path : `${SITE_URL}${path}`);
+
+/**
+ * Readable, absolute kindee.ie/media/... URL for a stored image — for search engines and AI (schema, sitemap,
+ * llms.txt). Pages themselves render straight from Supabase through next/image, which is faster and more reliable.
+ */
+export function seoImage(kind: MediaKind, label: string | null | undefined, id: string | null | undefined, url: string | null | undefined) {
+    const clean = label?.replace(/\s*\(\d+\)$/, "");
+    const m = mediaUrl(kind, clean, id, url);
+    return m ? absoluteUrl(m) : undefined;
+}
 
 /* ------------------------------------------------------------------ */
 /* Helpers that turn database rows into clean, factual SEO data        */
@@ -153,7 +164,11 @@ export const RESTAURANT_ID = `${SITE_URL}/#restaurant`;
 export function restaurantJsonLd(data: SiteData) {
     const { settings, hero, hours, menus, specialMenus } = data;
     const socials = socialLinks(settings);
-    const images = [hero?.image_url, settings?.about_image, "/opengraph-image.jpg"].filter((u): u is string => !!u).map(absoluteUrl);
+    const images = [
+        seoImage("hero", "south east asian food", "hero", hero?.image_url),
+        seoImage("about", "restaurant dining room", "about", settings?.about_image),
+        absoluteUrl("/opengraph-image.jpg"),
+    ].filter((u): u is string => !!u);
 
     const menuEntries = [
         ...specialMenus
@@ -163,7 +178,7 @@ export function restaurantJsonLd(data: SiteData) {
                 name: m.title,
                 description: m.description || undefined,
                 url: `${SITE_URL}/menu#special-menu`,
-                ...(m.image_url ? { image: absoluteUrl(m.image_url) } : {}),
+                ...(m.image_url ? { image: seoImage("special", m.title, m.id, m.image_url) } : {}),
                 ...(m.price_text ? { offers: { "@type": "Offer", description: m.price_text, priceCurrency: "EUR" } } : {}),
             })),
         ...menus
@@ -173,7 +188,7 @@ export function restaurantJsonLd(data: SiteData) {
                 name: m.title,
                 description: m.description || undefined,
                 url: m.pdf_url || `${SITE_URL}/menu`,
-                ...(m.image_url ? { image: absoluteUrl(m.image_url) } : {}),
+                ...(m.image_url ? { image: seoImage("menu", m.title, m.id, m.image_url) } : {}),
             })),
     ];
 
@@ -317,7 +332,7 @@ export function galleryJsonLd(data: SiteData) {
         about: { "@id": RESTAURANT_ID },
         image: data.galleryImages.map((g) => ({
             "@type": "ImageObject",
-            contentUrl: absoluteUrl(g.image_url),
+            contentUrl: seoImage("gallery", g.alt_text, g.id, g.image_url),
             name: g.alt_text ? `${g.alt_text} at Kin Dee, Dublin` : "Dish at Kin Dee, Dublin",
             caption: g.alt_text || undefined,
         })),

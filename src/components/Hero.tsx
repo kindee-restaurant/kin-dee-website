@@ -29,6 +29,7 @@ const Hero = ({ data, festiveBadge }: HeroProps) => {
 
     useEffect(() => {
         const handleScroll = () => setScrollY(window.scrollY);
+        handleScroll();
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
