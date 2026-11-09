@@ -22,11 +22,8 @@ CREATE POLICY "Public can read menus" ON menus
     FOR SELECT USING (true);
 
 -- Create policy for authenticated update
+-- Note: originally referenced a non-existent `users` table, which fails on a fresh
+-- database. Aligned with the other tables (any signed-in admin can manage).
 CREATE POLICY "Admins can manage menus" ON menus
-    FOR ALL USING (
-        EXISTS (
-            SELECT 1 FROM users
-            WHERE id = auth.uid()
-            AND role = 'admin'
-        )
-    );
+    FOR ALL USING (auth.role() = 'authenticated')
+    WITH CHECK (auth.role() = 'authenticated');
